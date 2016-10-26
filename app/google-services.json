@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "842909783796",
+    "firebase_url": "https://datpic-f305c.firebaseio.com",
+    "project_id": "datpic-f305c",
+    "storage_bucket": "datpic-f305c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:842909783796:android:0613b83f6c4e7f74",
+        "android_client_info": {
+          "package_name": "adinh03.calpoly.edu.datpic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "842909783796-plafd99khj5rbsetdhg5ert15g71ldpi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsEEikRjHOa9Yym6XklR_K-P6mhZpVAsY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
