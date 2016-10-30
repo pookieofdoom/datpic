@@ -6,6 +6,8 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
+import static adinh03.calpoly.edu.datpic.R.layout.entry;
+
 /**
  * Created by Anthony on 10/26/2016.
  */
@@ -13,7 +15,7 @@ import java.util.ArrayList;
 public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder> {
    private ArrayList<Entry> mEntry;
 
-   public MyAdapter(ArrayList<Entry> entry) { mEntry = entry;}
+   public MyAdapter(ArrayList<Entry> entry) {mEntry = entry;}
 
    @Override
    public EntryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -22,11 +24,16 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder> {
 
    @Override
    public void onBindViewHolder(EntryViewHolder holder, int position) {
-
+      holder.bind(mEntry.get(position));
    }
 
    @Override
    public int getItemCount() {
-      return 0;
+      return mEntry.size();
+   }
+
+   @Override
+   public int getItemViewType(int position) {
+      return entry;
    }
 }

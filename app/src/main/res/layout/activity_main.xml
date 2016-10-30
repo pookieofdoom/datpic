@@ -40,13 +40,26 @@
 
     </LinearLayout>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pick Image to test uploading"
+        android:id="@+id/testUpload"/>
+
+    <!--
+    Might use fragment in future. For now commented out.
+    -->
+    <!--<fragment-->
+        <!--android:id="@+id/fragment"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:name="adinh03.calpoly.edu.datpic.EntryFragment"/>-->
+
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/recyclerView">
 
     </android.support.v7.widget.RecyclerView>
-
-
 
 </LinearLayout>

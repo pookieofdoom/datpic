@@ -1,5 +1,6 @@
 package adinh03.calpoly.edu.datpic;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,7 +16,23 @@ import java.util.ArrayList;
  * Created by Anthony on 10/26/16.
  */
 
+/*this class is not currently used.
+   Will use this later when implementing fragments.
+
+ */
 public class EntryFragment extends Fragment {
+
+   public static EntryFragment newInstance() {
+      return new EntryFragment();
+   }
+
+   public EntryFragment() {
+   }
+
+   @Override
+   public void onAttach(Context context) {
+      super.onAttach(context);
+   }
 
    @Nullable
    @Override
