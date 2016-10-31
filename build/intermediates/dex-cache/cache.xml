@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/exploded-aar/com.google.firebase/firebase-database/9.8.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="03df48d3713661d66ad024b1e406259a4c26fcac">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-database-9.8.0_534f8b2321197da85204dbbe3213193f4ec28249/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/9.8.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="9f6d236bac26d02b410e4ee186ba517ace5ee661">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-basement-9.8.0_22626cf0309f50fba9d689a609a9208d911af8c8/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-appindexing/9.8.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="e3234cd25e23069abd48ecd2117bc0e8011bf45a">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-appindexing-9.8.0_3afc4f2d6648ed3e73497dc01a482e212f7332f5/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/exploded-aar/com.android.support/support-v4/24.0.0/jars/libs/internal_impl-24.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="fcaf463e10e69c1923ccf1edeba3b4196d239e00">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/internal_impl-24.0.0_2b477b1442ed070db861f3d57eef8cb1344b36bc/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/23.3.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="debf30ce0a7560396b6235edef77e447006454c2">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-recyclerview-v7-23.3.0_38f2eb06cca73cddd7c57541318c981fe8499b00/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/exploded-aar/com.android.support/support-v4/24.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="2f7e6e2dad1bccaf68a8820820adc6c0d5b96d37">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-v4-24.0.0_7818b2630ea3eca9334fc03da9bd611cc5bd452e/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/23.3.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="a0b5d60246cd9d4f3f2443611b3b4c25265840b5">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-vector-drawable-23.3.0_b7986c4c6d06936e768792dbdbb7e317f98bef25/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/exploded-aar/com.google.firebase/firebase-iid/9.8.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="6b6f292b8b951dcf2ecf2b20853e3eabc7d65c48">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-iid-9.8.0_438858a1396d16bff1902d8ec9281afb081d190a/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/exploded-aar/com.google.firebase/firebase-auth-module/9.8.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="3f8f779a22cbb4c4d0759467a4f1011bb5252970">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-auth-module-9.8.0_9b6fcf8a4e2412686bbffb67a1d78274a211bd5c/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/exploded-aar/com.google.firebase/firebase-auth-common/9.8.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="4438b1a7848a7c571122ba618aa1304514aabee6">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-auth-common-9.8.0_b7475af555e1ada68c0ea1dba72027cd010ab4b0/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/.gradle/caches/modules-2/files-2.1/com.squareup.picasso/picasso/2.5.2/7446d06ec8d4f7ffcc53f1da37c95f200dcb9387/picasso-2.5.2.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="7446d06ec8d4f7ffcc53f1da37c95f200dcb9387">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/picasso-2.5.2_143f50de9c9b6327b49710dc0352f9dffbcf1c46/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/exploded-aar/com.google.firebase/firebase-analytics-impl/9.8.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="190a642ba16d1421296a4d794606279b80039c59">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-analytics-impl-9.8.0_8779fa2cdc995528a2afc5039efa85866ea2f23c/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-tasks/9.8.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="bf2e1838e4428616c1aa26edf43de72b5b99bf84">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-tasks-9.8.0_d46b682a1844d7b61d37f5aa30d5ac33ba3abb5d/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/24.0.0/support-annotations-24.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="2943c74db6d4346ab8c6531adac91fa05c137c40">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/support-annotations-24.0.0_419fcbe0784181de3b8b4fd5c49c03b9f55b4ef6/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.3.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="1b8e03daaa43fb0a4cd57e378167c2fd70454c1e">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-appcompat-v7-23.3.0_88b0d62f9340a9fb67f270b4f7853ec46f0cc1be/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/exploded-aar/com.google.firebase/firebase-auth/9.8.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="15e59454416c6341bd3ed2533b585cd340682dd1">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-auth-9.8.0_4103a99b84127adbc16450849a445ebbcefab376/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/23.3.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="23be6993826b8fd88bbc8d14928bb3b8960d3d4e">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-animated-vector-drawable-23.3.0_f22cbe61844633910481a731b430aff0ad3df017/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/exploded-aar/com.google.firebase/firebase-common/9.8.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="c61641e333fa88da21758bab8cc28ee16604b05f">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-common-9.8.0_57195fd0df7cd6aeb132e4859a3f51f417dd168e/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/exploded-aar/com.google.firebase/firebase-analytics/9.8.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="9ff04cc3470178a44512624036751a803418c2ca">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-analytics-9.8.0_39096c8c927cce3974ca21af1b64536cceef03ac/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="827ebead6749522a27b68a8a0aa31cdc58e300b0">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_b346777125b67e3d4489321d1add5417e9e605c7/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/exploded-aar/com.google.firebase/firebase-database-connection/9.8.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="5f47ede9561595584dca71104baa0fecb36dda87">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-database-connection-9.8.0_93203e6ffe5215d61a4dc1e99be2877793e902e2/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="69f6dd19f35b62390d883b55b94945c95aad4edb">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_94f0d06cc0c754f77f43c57b220daffffdb1d641/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/9.8.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="7e92aadd0697922316d1395c1887a23aebec640a">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-base-9.8.0_cb66c0c170369a44a0f46ad78dd09f1effee9907/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/exploded-aar/com.google.firebase/firebase-storage/9.8.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="7fd91ec2730fdaa82906aad32a3f3d3e574bae56">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-storage-9.8.0_0a8351330471b9d1eaf1de477c268ada16b221ca/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/exploded-aar/com.google.firebase/firebase-storage-common/9.8.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="ec9104b53aee77dfcfd2fe1c4add23ff7c4df55f">
+        <dex dex="/Users/Dylan/Documents/CalPoly/17Fall/436CPE/Project/datpic/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-storage-common-9.8.0_9ea706579526209161ea0ab193fe8a870bc66079/classes.dex" />
+    </item>
+
+</items>

@@ -3,6 +3,7 @@ package adinh03.calpoly.edu.datpic;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +25,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity{
    private FirebaseAuth mFirebaseAuth;
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity{
    private FirebaseStorage mStorage;
    private FirebaseDatabase mDataBase;
    private Button mTestUpload;
+   private Button mViewComment;
    private static final int TEST_UPLOAD_INTENT = 2;
 
 
@@ -57,6 +60,7 @@ public class MainActivity extends AppCompatActivity{
        if (mEntryList == null) {
           mEntryList = new ArrayList<>();
        }
+       StaticEntryList.getInstance().setEntry(mEntryList);
 
        mAdapter = new MyAdapter(mEntryList);
 
@@ -87,7 +91,6 @@ public class MainActivity extends AppCompatActivity{
           }
        });
 
-
        //DatabaseReference dbRef = mDataBase.getReference();
       //Test for downloading all images (only for Vertical Prototype)
        populateAllImages();
@@ -107,12 +110,14 @@ public class MainActivity extends AppCompatActivity{
                Log.d("DEBUG", "User is: " + userSnapshot.getKey());
                for (DataSnapshot imageShots : userSnapshot.getChildren()) {
                   Log.d("DEBUG", "Image is: " + imageShots.getKey());
-                  Uri data = Uri.parse(imageShots.getValue(String.class));
-                  Entry insert = new Entry(0, 0, data);
-                  if (!mEntryList.contains(insert)) {
-                     mEntryList.add(insert);
-                     mAdapter.notifyDataSetChanged();
-                  }
+
+                     Uri data = Uri.parse(imageShots.child("url").getValue().toString());
+                     Entry insert = new Entry(0, 0, data);
+                     if (!mEntryList.contains(insert)) {
+                        mEntryList.add(insert);
+                        mAdapter.notifyDataSetChanged();
+                        StaticEntryList.getInstance().setMap(data.toString(), imageShots.getKey());
+                     }
 
                }
 
@@ -154,7 +159,8 @@ public class MainActivity extends AppCompatActivity{
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                Toast.makeText(MainActivity.this, "Upload Done", Toast.LENGTH_LONG).show();
                Uri downloadUri = taskSnapshot.getDownloadUrl();
-               mDataBase.getInstance().getReference("users").child(mFirebaseUser.getUid()).push().setValue(downloadUri.toString());
+               DatabaseReference newEntry = mDataBase.getInstance().getReference("users").child(mFirebaseUser.getUid()).push();
+               newEntry.child("url").setValue(downloadUri.toString());
 
             }
          });
