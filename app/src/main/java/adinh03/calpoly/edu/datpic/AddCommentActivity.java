@@ -26,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 
 import org.w3c.dom.Comment;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +39,7 @@ public class AddCommentActivity extends AppCompatActivity {
     EditText inputComment;
     Button submitCommentButton;
     ArrayList<CommentEntry> commentList;
-    RecyclerView commentView;
+    RecyclerView commentRecyclerView;
     private CommentAdapter adapter;
     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
     private FirebaseDatabase mDataBase;
@@ -51,24 +52,30 @@ public class AddCommentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.comment_activity);
+
+        commentList = (ArrayList<CommentEntry>) getLastCustomNonConfigurationInstance();
+        if (commentList == null) {
+            commentList = new ArrayList<>();
+        }
+
         inputComment = (EditText) findViewById(R.id.InputCommentTextBox);
         submitCommentButton = (Button) findViewById(R.id.CommentSubmitButton);
-        commentView = (RecyclerView) findViewById(R.id.CommentRecylerView);
-        commentView.setAdapter(adapter);
-        commentView.setLayoutManager(new LinearLayoutManager(this));
+        commentRecyclerView = (RecyclerView) findViewById(R.id.CommentRecylerView);
+
+        commentRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         final int clickedImageIndex = getIntent().getIntExtra("clickedImageIndex", -1);
-        adapter = new CommentAdapter(commentList);
-        commentList = new ArrayList<>();
+
 
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
+
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 commentList.clear();
-
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                     Log.d("DEBUG", "User is: " + userSnapshot.getKey());
                     for (DataSnapshot imageShots : userSnapshot.getChildren()) {
@@ -79,16 +86,17 @@ public class AddCommentActivity extends AppCompatActivity {
 
 
                             for (DataSnapshot commentShots : imageShots.child("comments").getChildren()) {
-                                System.out.println("in for loop: " + commentShots.getValue().toString());
                                 CommentEntry insert = new CommentEntry();
+                                insert.setText(commentShots.getValue().toString());
+//                                commentList.clear();
                                 if (!commentList.contains(insert)) {
                                     commentList.add(insert);
-                                    adapter.notifyDataSetChanged();
                                 }
+                                adapter.notifyDataSetChanged();
+
                             }
+                            populateAllComments();
                         }
-
-
                     }
 
                 }
@@ -100,8 +108,10 @@ public class AddCommentActivity extends AppCompatActivity {
 
             }
         });
-
-
+        //after update the list
+        adapter = new CommentAdapter(commentList);
+        System.out.println("adapter: " + adapter.mList.size());
+        commentRecyclerView.setAdapter(adapter);
 
 
         inputComment.setOnKeyListener(new View.OnKeyListener() {
@@ -113,8 +123,6 @@ public class AddCommentActivity extends AppCompatActivity {
                     if ((keyCode == KeyEvent.KEYCODE_ENTER) && isEmptyString(inputComment)) {
                         System.out.println(inputComment.getText().toString());
                         addComment(inputComment, clickedImageIndex);
-
-
                         //adds comment in database for photo
                         inputComment.setText(null);
                     }
@@ -135,15 +143,30 @@ public class AddCommentActivity extends AppCompatActivity {
 
     }
 
+    protected void populateAllComments() {
+
+    }
+
     protected void addComment(EditText text, int clickedImageIndex) {
 
         String path = StaticEntryList.getInstance().getMap().get(StaticEntryList.getInstance().getEntry(clickedImageIndex).getUri().toString());
         mDataBase.getInstance().getReference("users").child(mFirebaseUser.getUid()).child(path).child("comments").push().setValue(text.getText().toString());
+        CommentEntry newEntry = new CommentEntry();
+        newEntry.setText(text.getText().toString());
+        commentList.add(newEntry);
+        adapter.notifyDataSetChanged();
     }
 
     protected boolean isEmptyString(EditText text) {
         String input = text.getText().toString();
         return input.trim().length() != 0 && !TextUtils.isEmpty(input);
+    }
+
+
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState){
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     public class CommentAdapter extends RecyclerView.Adapter<CommentHolder> {
@@ -175,14 +198,14 @@ public class AddCommentActivity extends AppCompatActivity {
     }
 
     public static class CommentHolder extends RecyclerView.ViewHolder {
-        private TextView commentView;
+        private TextView commentTextView;
         public CommentHolder(View view) {
             super(view);
-            commentView = (TextView) view.findViewById(R.id.commentView);
+            commentTextView = (TextView) view.findViewById(R.id.commentView);
         }
 
         public void bind(final CommentEntry commentEntry) {
-            commentView.setText(commentEntry.getText());
+            commentTextView.setText(commentEntry.getText());
         }
 
 
