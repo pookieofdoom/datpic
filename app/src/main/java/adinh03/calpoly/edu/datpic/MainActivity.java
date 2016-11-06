@@ -51,8 +51,8 @@ public class MainActivity extends AppCompatActivity{
        mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
        if (mFirebaseUser == null) {
-           // Not logged in, launch the Log In activity
-           loadLogInView();
+          // Not logged in, launch the Log In activity
+          loadLogInView();
        }
 
        // Initializing Entry Objects
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity{
       super.onActivityResult(requestCode, resultCode, data);
       if (requestCode == TEST_UPLOAD_INTENT && resultCode == RESULT_OK) {
          Uri uri = data.getData();
-         StorageReference filePath = mStorage.getReference().child("Photos").child(mFirebaseUser.getUid()).child(uri.getLastPathSegment());
+         StorageReference filePath = mStorage.getReference().child("Photos").child(mFirebaseUser.getUid()).child(Long.toString(System.currentTimeMillis()));
          filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
