@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity
    private FirebaseDatabase mDataBase;
    private Button mTestUpload;
    private Button mViewComment;
+   private User mUser;
    private static final int TEST_UPLOAD_INTENT = 2;
 
 
@@ -57,6 +58,9 @@ public class MainActivity extends AppCompatActivity
          // Not logged in, launch the Log In activity
          loadLogInView();
       }
+
+      // Initializing current User
+      mUser = new User(mFirebaseUser.getEmail(), mFirebaseUser.getUid());
 
       // Initializing Entry Objects
       mEntryList = (ArrayList<Entry>) getLastCustomNonConfigurationInstance();
@@ -218,9 +222,13 @@ public class MainActivity extends AppCompatActivity
       switch (item.getItemId())
       {
          case R.id.menu_settings:
-            Toast.makeText(this, "settings hit", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, UserProfileActivity.class);
+            Bundle userBundle = new Bundle();
+            userBundle.putSerializable("UserInfo", mUser);
+            intent.putExtras(userBundle);
+            startActivity(intent);
             return true;
-         case R.id.signout:
+         case R.id.sign_out:
             Toast.makeText(this, "signing out", Toast.LENGTH_SHORT).show();
             mFirebaseAuth.signOut();
             loadLogInView();

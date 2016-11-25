@@ -8,7 +8,7 @@
         app:showAsAction="always"
         />
     <item
-        android:id="@+id/signout"
+        android:id="@+id/sign_out"
         android:title='Sign Out'
         />
 

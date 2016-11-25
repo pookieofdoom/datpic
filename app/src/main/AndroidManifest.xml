@@ -20,6 +20,7 @@
         <activity android:name=".LogInActivity"></activity>
         <activity android:name=".SignUpActivity"></activity>
         <activity android:name=".AddCommentActivity"></activity>
+        <activity android:name=".UserProfileActivity"></activity>
 
     </application>
 
