@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -198,6 +200,34 @@ public class MainActivity extends AppCompatActivity
       String imageKey = newImage.getKey();
       newImage.child("url").setValue(uri.toString());
       newEntry.child("Images").child(imageKey).setValue(uri.toString());
+
+   }
+
+   @Override
+   public boolean onCreateOptionsMenu(Menu menu)
+   {
+      super.onCreateOptionsMenu(menu);
+      getMenuInflater().inflate(R.menu.main_menu, menu);
+      return true;
+   }
+
+   @Override
+   public boolean onOptionsItemSelected(MenuItem item)
+   {
+      //return super.onOptionsItemSelected(item);
+      switch (item.getItemId())
+      {
+         case R.id.menu_settings:
+            Toast.makeText(this, "settings hit", Toast.LENGTH_SHORT).show();
+            return true;
+         case R.id.signout:
+            Toast.makeText(this, "signing out", Toast.LENGTH_SHORT).show();
+            mFirebaseAuth.signOut();
+            loadLogInView();
+         default:
+            break;
+      }
+      return false;
 
    }
 }
