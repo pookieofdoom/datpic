@@ -5,16 +5,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -26,19 +25,24 @@ public class UserProfileActivity extends AppCompatActivity
    private ImageView mProfilePic;
    private TextView mUserEmail;
    private User mUser;
+   private FirebaseStorage mStorage;
+
    @Override
    protected void onCreate(@Nullable Bundle savedInstanceState)
    {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_user_profile);
-      mUser = (User) getIntent().getExtras().get("UserInfo");
+      mUser = (User) getIntent().getSerializableExtra("UserIntent");
       mProfilePic = (ImageView) findViewById(R.id.user_image);
       mUserEmail = (TextView) findViewById(R.id.setting_email);
       mUserEmail.setText(mUser.getEmail());
+      mStorage = FirebaseStorage.getInstance();
+
       Picasso
             .with(getApplicationContext())
             .load(mUser.getProfilePicture())
             .placeholder(R.mipmap.ic_launcher)
+            .fit()
             .into(mProfilePic);
 
       mProfilePic.setOnClickListener(new View.OnClickListener()
@@ -61,35 +65,35 @@ public class UserProfileActivity extends AppCompatActivity
       if (resultCode == RESULT_OK && requestCode == 2)
       {
          Uri uri = data.getData();
-         mUser.setProfilePicture(uri);
+         mUser.setProfilePicture(uri.toString());
          Picasso
                .with(getApplicationContext())
                .load(mUser.getProfilePicture())
                .placeholder(R.mipmap.ic_launcher)
+               .fit()
                .into(mProfilePic);
-      }
-      DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
-      ref.addValueEventListener(new ValueEventListener()
-      {
-         @Override
-         public void onDataChange(DataSnapshot dataSnapshot)
+         StorageReference filePath = mStorage.getReference().child("Photos").child(mUser.getId())
+               .child("ProfilePicture");
+         filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>()
          {
-            for (DataSnapshot userSnapshot : dataSnapshot.getChildren())
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
             {
-               Log.d("DEBUG", "User is: " + userSnapshot.getKey());
-               if (userSnapshot.getKey().equals(mUser.getId()))
-               {
-                  //will store profile picture here
-               }
-
+               Toast.makeText(UserProfileActivity.this, "Profile Pic set", Toast.LENGTH_SHORT).show();
             }
-         }
+         });
+      }
+   }
 
-         @Override
-         public void onCancelled(DatabaseError databaseError)
-         {
-
-         }
-      });
+   @Override
+   public void onBackPressed()
+   {
+      //super.onBackPressed();
+      Intent i = new Intent();
+      Bundle userBundle = new Bundle();
+      userBundle.putSerializable("UserIntent", mUser);
+      i.putExtras(userBundle);
+      setResult(RESULT_OK, i);
+      finish();
    }
 }

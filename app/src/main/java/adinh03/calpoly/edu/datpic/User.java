@@ -1,7 +1,5 @@
 package adinh03.calpoly.edu.datpic;
 
-import android.net.Uri;
-
 import java.io.Serializable;
 
 /**
@@ -12,9 +10,7 @@ public class User implements Serializable
 {
    private String mEmail, mId;
 
-
-
-   private Uri mProfilePicture;
+   private String mProfilePicture;
 
    public User(String email, String id)
    {
@@ -22,19 +18,19 @@ public class User implements Serializable
       mId = id;
    }
 
-   public User(String email, String id, Uri profilePicture)
+   public User(String email, String id, String profilePicture)
    {
       mEmail = email;
       mId = id;
       mProfilePicture = profilePicture;
    }
 
-   public Uri getProfilePicture()
+   public String getProfilePicture()
    {
       return mProfilePicture;
    }
 
-   public void setProfilePicture(Uri mProfilePicture)
+   public void setProfilePicture(String mProfilePicture)
    {
       this.mProfilePicture = mProfilePicture;
    }

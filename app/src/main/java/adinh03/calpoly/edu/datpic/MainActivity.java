@@ -3,16 +3,17 @@ package adinh03.calpoly.edu.datpic;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity
    private Button mViewComment;
    private User mUser;
    private static final int TEST_UPLOAD_INTENT = 2;
+   private static final int USER_SETTING_INTENT = 3;
 
 
    @Override
@@ -86,7 +88,21 @@ public class MainActivity extends AppCompatActivity
 
       // Initialize Storage
       mStorage = FirebaseStorage.getInstance();
-
+      mStorage.getReference().child("Photos").child(mUser.getId()).child("ProfilePicture")
+            .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
+      {
+         @Override
+         public void onSuccess(Uri uri)
+         {
+            mUser.setProfilePicture(uri.toString());
+         }
+      }).addOnFailureListener(new OnFailureListener()
+      {
+         @Override
+         public void onFailure(@NonNull Exception e)
+         {
+         }
+      });
 
       //Test for uploading
       mTestUpload = (Button) findViewById(R.id.testUpload);
@@ -123,15 +139,15 @@ public class MainActivity extends AppCompatActivity
 
             for (DataSnapshot userSnapshot : dataSnapshot.getChildren())
             {
-               Log.d("DEBUG", "User is: " + userSnapshot.getKey());
+               //Log.d("DEBUG", "User is: " + userSnapshot.getKey());
                for (DataSnapshot imageShots : userSnapshot.getChildren())
                {
-                  Log.d("DEBUG", "Image is: " + imageShots.getKey());
+                  //Log.d("DEBUG", "Image is: " + imageShots.getKey());
                   if (imageShots.getKey().equals("Images"))
                   {
                      for (DataSnapshot urlShots : imageShots.getChildren())
                      {
-                        Log.d("DEBUG", "Url is " + urlShots.getValue(String.class));
+                        //Log.d("DEBUG", "Url is " + urlShots.getValue(String.class));
                         Uri data = Uri.parse(urlShots.getValue().toString());
                         Entry insert = new Entry(0, 0, data);
                         if (!mEntryList.contains(insert))
@@ -194,6 +210,11 @@ public class MainActivity extends AppCompatActivity
             }
          });
       }
+      else if (requestCode == USER_SETTING_INTENT && resultCode == RESULT_OK)
+      {
+         mUser = (User) data.getSerializableExtra("UserIntent");
+
+      }
    }
 
    private void storeImageToUser(Uri uri)
@@ -224,9 +245,9 @@ public class MainActivity extends AppCompatActivity
          case R.id.menu_settings:
             Intent intent = new Intent(this, UserProfileActivity.class);
             Bundle userBundle = new Bundle();
-            userBundle.putSerializable("UserInfo", mUser);
+            userBundle.putSerializable("UserIntent", mUser);
             intent.putExtras(userBundle);
-            startActivity(intent);
+            startActivityForResult(intent, USER_SETTING_INTENT);
             return true;
          case R.id.sign_out:
             Toast.makeText(this, "signing out", Toast.LENGTH_SHORT).show();
