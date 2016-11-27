@@ -6,7 +6,7 @@ android {
     buildToolsVersion "23.0.3"
     defaultConfig {
         applicationId "adinh03.calpoly.edu.datpic"
-        minSdkVersion 15
+        minSdkVersion 23
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -33,6 +33,7 @@ dependencies {
     compile 'com.google.firebase:firebase-storage:9.6.1'
     compile 'com.google.android.gms:play-services-appindexing:9.6.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.google.android.gms:play-services:9.6.1'
     testCompile 'junit:junit:4.12'
 }
 
