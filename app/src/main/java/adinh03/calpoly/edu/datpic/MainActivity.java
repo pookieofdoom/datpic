@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,7 +51,6 @@ public class MainActivity extends AppCompatActivity
    {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_main);
-
       // Initialize Firebase Auth
       mFirebaseAuth = FirebaseAuth.getInstance();
       mFirebaseUser = mFirebaseAuth.getCurrentUser();
@@ -62,7 +62,8 @@ public class MainActivity extends AppCompatActivity
       }
 
       // Initializing current User
-      mUser = new User(mFirebaseUser.getEmail(), mFirebaseUser.getUid());
+      if (mFirebaseUser != null)
+         mUser = new User(mFirebaseUser.getEmail(), mFirebaseUser.getUid());
 
       // Initializing Entry Objects
       mEntryList = (ArrayList<Entry>) getLastCustomNonConfigurationInstance();
@@ -88,8 +89,9 @@ public class MainActivity extends AppCompatActivity
 
       // Initialize Storage
       mStorage = FirebaseStorage.getInstance();
-      mStorage.getReference().child("Photos").child(mUser.getId()).child("ProfilePicture")
-            .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
+      if (mFirebaseUser != null)
+         mStorage.getReference().child("Photos").child(mFirebaseUser.getUid()).child("ProfilePicture")
+               .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
       {
          @Override
          public void onSuccess(Uri uri)
