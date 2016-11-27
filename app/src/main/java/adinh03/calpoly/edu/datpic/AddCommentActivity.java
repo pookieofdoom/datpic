@@ -48,8 +48,7 @@ import java.util.ArrayList;
  * Created by Dylan on 10/30/16.
  */
 
-public class AddCommentActivity extends AppCompatActivity implements
-      GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class AddCommentActivity extends AppCompatActivity {
    EditText inputComment;
    Button submitCommentButton;
    ArrayList<CommentEntry> commentList;
@@ -272,63 +271,63 @@ public class AddCommentActivity extends AppCompatActivity implements
    }
 
 
+}
 
 
 
-
-
-
-   @Override
-   public void onConnected(@Nullable Bundle bundle) {
-      if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-         // TODO: Consider calling
-         //    ActivityCompat#requestPermissions
-         // here to request the missing permissions, and then overriding
-         //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-         //                                          int[] grantResults)
-         // to handle the case where the user grants the permission. See the documentation
-         // for ActivityCompat#requestPermissions for more details.
-//         ActivityCompat.requestPermissions(this,
-//               new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//               1);
-         return;
-      }
-      userLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-      if (userLocation != null) {
-         System.out.println(String.valueOf(userLocation.getLatitude()));
-         System.out.println(String.valueOf(userLocation.getLongitude()));
-      }
-   }
-
-   @Override
-   public void onConnectionSuspended(int i) {
-
-   }
-
-   @Override
-   public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-   }
-
-   @Override
-   public void onLocationChanged(Location location) {
-
-   }
 
 
 //   @Override
-//   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//      super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//
-//      if (requestCode == 1) {
-//         if(grantResults.length >0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-//
-//            //Displaying a toast
-//            System.out.println("Permission granted now you can read the storage");
-//         }else {
-//            //Displaying another toast if permission is not granted
-//            System.out.println("Oops you just denied the permission");
-//         }
+//   public void onConnected(@Nullable Bundle bundle) {
+//      if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//         // TODO: Consider calling
+//         //    ActivityCompat#requestPermissions
+//         // here to request the missing permissions, and then overriding
+//         //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//         //                                          int[] grantResults)
+//         // to handle the case where the user grants the permission. See the documentation
+//         // for ActivityCompat#requestPermissions for more details.
+////         ActivityCompat.requestPermissions(this,
+////               new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+////               1);
+//         return;
+//      }
+//      userLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+//      if (userLocation != null) {
+//         System.out.println(String.valueOf(userLocation.getLatitude()));
+//         System.out.println(String.valueOf(userLocation.getLongitude()));
 //      }
 //   }
-}
+//
+//   @Override
+//   public void onConnectionSuspended(int i) {
+//
+//   }
+//
+//   @Override
+//   public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+//
+//   }
+//
+//   @Override
+//   public void onLocationChanged(Location location) {
+//
+//   }
+//
+//
+////   @Override
+////   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+////      super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+////
+////      if (requestCode == 1) {
+////         if(grantResults.length >0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+////
+////            //Displaying a toast
+////            System.out.println("Permission granted now you can read the storage");
+////         }else {
+////            //Displaying another toast if permission is not granted
+////            System.out.println("Oops you just denied the permission");
+////         }
+////      }
+////   }
+//}
