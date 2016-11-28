@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements
    private FirebaseDatabase mDataBase;
    private Button mTestUpload;
    private Button mViewComment;
+   private Button mGlobalImages;
    private User mUser;
    private static final int TEST_UPLOAD_INTENT = 2;
    private static final int USER_SETTING_INTENT = 3;
@@ -66,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements
    private static int UPDATE_INTERVAL = 10000;
    private static int FASTEST_INTERVAL = 5000;
    private static int DISPLACEMENT = 10;
-   private static int MaxRange = 10;
+   private static double MaxRange = 0.3;
 
    @Override
    protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +136,16 @@ public class MainActivity extends AppCompatActivity implements
          }
       });
 
+      mGlobalImages = (Button) findViewById(R.id.globalImages);
+      mGlobalImages.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View view) {
+            populateAllImages();
+         }
+      });
+
+
+
       //setup for location permission
       //asks for permission
       permissionRequest();
@@ -142,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements
 
       //DatabaseReference dbRef = mDataBase.getReference();
       //Test for downloading all images (only for Vertical Prototype)
-      populateAllImages();
+      populateLocalImages();
 
 
    }
@@ -174,29 +186,77 @@ public class MainActivity extends AppCompatActivity implements
 
    private void populateAllImages() {
 
-      DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
+      DatabaseReference ref = FirebaseDatabase.getInstance().getReference("images");
       ref.addValueEventListener(new ValueEventListener() {
          @Override
          public void onDataChange(DataSnapshot dataSnapshot) {
             mEntryList.clear();
             boolean flag = false;
 
-            for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-               //Log.d("DEBUG", "User is: " + userSnapshot.getKey());
-               for (DataSnapshot imageShots : userSnapshot.getChildren()) {
-                  //Log.d("DEBUG", "Image is: " + imageShots.getKey());
-                  if (imageShots.getKey().equals("Images")) {
-                     for (DataSnapshot urlShots : imageShots.getChildren()) {
-                        //Log.d("DEBUG", "Url is " + urlShots.getValue(String.class));
-                        Uri data = Uri.parse(urlShots.getValue().toString());
-                        Entry insert = new Entry(0, 0, data);
-                        if (!mEntryList.contains(insert)) {
-                           mEntryList.add(insert);
-                           flag = true;
-                           StaticEntryList.getInstance().setMap(data.toString(), urlShots.getKey());
-                        }
+
+            for (DataSnapshot imageShots : dataSnapshot.getChildren()) {
+               for (DataSnapshot urlShots : imageShots.getChildren()) {
+                  if (urlShots.getKey().equals("url")) {
+                     Uri data = Uri.parse(urlShots.getValue().toString());
+                     Entry insert = new Entry(0, 0, data);
+                     if (!mEntryList.contains(insert)) {
+                        mEntryList.add(insert);
+                        flag = true;
+                        StaticEntryList.getInstance().setMap(data.toString(), urlShots.getKey());
                      }
                   }
+               }
+
+               if (flag)
+                  mAdapter.notifyDataSetChanged();
+            }
+         }
+         @Override
+         public void onCancelled(DatabaseError databaseError) {
+
+         }
+      });
+   }
+
+
+   private void populateLocalImages() {
+
+      DatabaseReference ref = FirebaseDatabase.getInstance().getReference("images");
+      ref.addValueEventListener(new ValueEventListener() {
+         @Override
+         public void onDataChange(DataSnapshot dataSnapshot) {
+            mEntryList.clear();
+            boolean flag = true;
+            double latitude = 0;
+            double longitude = 0;
+            String url = null;
+            Location pictureLocation = new Location("pictureLocation");
+
+            for (DataSnapshot imageSnapshot: dataSnapshot.getChildren()) {
+               for (DataSnapshot imageInfoSnapshot: imageSnapshot.getChildren()) {
+                  if (imageInfoSnapshot.getKey().equals("latitude")) {
+                     latitude = Double.valueOf(imageInfoSnapshot.getValue().toString());
+                  }
+                  else if (imageInfoSnapshot.getKey().equals("longitude")) {
+                     longitude = Double.valueOf(imageInfoSnapshot.getValue().toString());
+                  }
+                  else if (imageInfoSnapshot.getKey().equals("url")) {
+                     url = imageInfoSnapshot.getValue().toString();
+                  }
+
+               }
+
+               System.out.println("url issss: " + url);
+               Uri data = Uri.parse(url);
+               Entry insert = new Entry(0, 0, data);
+               pictureLocation.setLatitude(latitude);
+               pictureLocation.setLongitude(longitude);
+
+
+               if (!mEntryList.contains(insert) && withinRange(pictureLocation, userLocation)) {
+                  mEntryList.add(insert);
+                  flag = true;
+                  StaticEntryList.getInstance().setMap(data.toString(), imageSnapshot.getKey());
                }
 
             }
@@ -210,8 +270,6 @@ public class MainActivity extends AppCompatActivity implements
 
          }
       });
-
-
    }
 
    private void loadLogInView() {
@@ -253,6 +311,8 @@ public class MainActivity extends AppCompatActivity implements
       DatabaseReference newImage = mDataBase.getInstance().getReference("images").push();
       String imageKey = newImage.getKey();
       newImage.child("url").setValue(uri.toString());
+      newImage.child("latitude").setValue(String.valueOf(userLocation.getLatitude()));
+      newImage.child("longitude").setValue(String.valueOf(userLocation.getLongitude()));
       newEntry.child("Images").child(imageKey).setValue(uri.toString());
 
    }
@@ -380,7 +440,9 @@ public class MainActivity extends AppCompatActivity implements
 
    //Determines the distance between where picture was uploaded and user
    private boolean withinRange(Location pictureLocation, Location userLocation) {
-
+      if (pictureLocation.getLatitude() == userLocation.getLatitude() && pictureLocation.getLongitude() == userLocation.getLongitude()) {
+         return true;
+      }
       int earthRadius = 6371;
       double latDistance = Math.toRadians(pictureLocation.getLatitude() - userLocation.getLatitude());
       double lngDistance = Math.toRadians(pictureLocation.getLongitude() - userLocation.getLongitude());
