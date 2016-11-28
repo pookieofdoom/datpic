@@ -1,14 +1,8 @@
 package adinh03.calpoly.edu.datpic;
 
-import android.*;
-import android.Manifest;
-import android.content.pm.PackageManager;
+
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,19 +15,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderApi;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -59,17 +43,6 @@ public class AddCommentActivity extends AppCompatActivity {
    private FirebaseUser mFirebaseUser;
    private FirebaseAuth mFirebaseAuth;
    private int clickedImageIndex;
-
-   private boolean mRequestLocationUpdates = false;
-   private GoogleApiClient mGoogleApiClient = null;
-   private Location userLocation = null;
-   private LocationRequest mLocationRequest;
-
-   private FusedLocationProviderApi fusedLocationProviderApi;
-
-   private static int UPDATE_INTERVAL = 10000;
-   private static int FASTEST_INTERVAL = 5000;
-   private static int DISPLACEMENT = 10;
 
    @Override
    protected void onCreate(Bundle savedInstanceState) {
@@ -153,7 +126,7 @@ public class AddCommentActivity extends AppCompatActivity {
                for (DataSnapshot entrySnapShot : userSnapshot.getChildren()) {
                   if (entrySnapShot.getKey().equals("Entry")) {
                      for (DataSnapshot commentSnapShot : entrySnapShot.getChildren()) {
-                        Log.d("DEBUG2", "CommentId is " + commentSnapShot.getKey().toString());
+                        Log.d("DEBUG2", "CommentId is " + commentSnapShot.getKey());
                         if (commentSnapShot.child("imageLoc").getValue() != null &&
                               commentSnapShot.child("imageLoc").getValue(String.class).equals
                                     (StaticEntryList.getInstance()
