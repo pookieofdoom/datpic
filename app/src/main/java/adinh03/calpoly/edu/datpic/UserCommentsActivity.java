@@ -65,19 +65,25 @@ public class UserCommentsActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 commentList.clear();
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-                    if(userSnapshot.getKey() == mFirebaseUser.getUid())
-                    for (DataSnapshot entrySnapShot : userSnapshot.getChildren()) {
-                        if (entrySnapShot.getKey().equals("Entry")) {
-                            for (DataSnapshot commentSnapShot : entrySnapShot.getChildren()) {
-                                if (commentSnapShot.child("imageLoc").getValue() != null) {
+                    System.out.println("Data snapshot" + userSnapshot.getKey());
+                    System.out.println("UID" + mFirebaseUser.getUid());
+                    if(userSnapshot.getKey().equals(mFirebaseUser.getUid())) {
+                        System.out.println("UID" + mFirebaseUser.getUid());
+                        for (DataSnapshot entrySnapShot : userSnapshot.getChildren()) {
 
-                                    CommentEntry insert = new CommentEntry();
-                                    insert.setText(commentSnapShot.child("comment").getValue(String.class));
-                                    if (!commentList.contains(insert)) {
-                                        commentList.add(insert);
-                                        adapter.notifyDataSetChanged();
+                            if (entrySnapShot.getKey().equals("Entry")) {
+                                for (DataSnapshot commentSnapShot : entrySnapShot.getChildren()) {
+                                    System.out.println("comments" + commentSnapShot.child("comment").getValue(String.class));
+                                    if (commentSnapShot.child("imageLoc").getValue() != null) {
+
+                                        CommentEntry insert = new CommentEntry();
+                                        insert.setText(commentSnapShot.child("comment").getValue(String.class));
+                                        if (!commentList.contains(insert)) {
+                                            commentList.add(insert);
+                                            adapter.notifyDataSetChanged();
+                                        }
+
                                     }
-
                                 }
                             }
                         }
