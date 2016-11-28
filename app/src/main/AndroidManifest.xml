@@ -25,6 +25,9 @@
         <activity android:name=".AddCommentActivity"></activity>
 
         <activity android:name=".UserProfileActivity"></activity>
+        <activity android:name=".UserCommentsActivity"></activity>
+        <activity android:name=".UserPostsActivity"></activity>
+        <activity android:name=".EditProfileActivity"></activity>
 
     </application>
 

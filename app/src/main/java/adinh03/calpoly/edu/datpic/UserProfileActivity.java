@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +27,9 @@ public class UserProfileActivity extends AppCompatActivity
    private TextView mUserEmail;
    private User mUser;
    private FirebaseStorage mStorage;
+   private Button postButton;
+   private Button commentButton;
+   private Button editProfileButton;
 
    @Override
    protected void onCreate(@Nullable Bundle savedInstanceState)
@@ -35,15 +39,20 @@ public class UserProfileActivity extends AppCompatActivity
       mUser = (User) getIntent().getSerializableExtra("UserIntent");
       mProfilePic = (ImageView) findViewById(R.id.user_image);
       mUserEmail = (TextView) findViewById(R.id.setting_email);
-      mUserEmail.setText(mUser.getEmail());
-      mStorage = FirebaseStorage.getInstance();
 
+      mStorage = FirebaseStorage.getInstance();
+      postButton = (Button) findViewById(R.id.postsButton);
+      commentButton = (Button) findViewById(R.id.commentsButton);
+      editProfileButton = (Button) findViewById(R.id.editProfileButton);
+
+
+      mUserEmail.setText(mUser.getEmail());
       Picasso
-            .with(getApplicationContext())
-            .load(mUser.getProfilePicture())
-            .placeholder(R.mipmap.ic_launcher)
-            .fit()
-            .into(mProfilePic);
+              .with(getApplicationContext())
+              .load(mUser.getProfilePicture())
+              .placeholder(R.mipmap.ic_launcher)
+              .fit()
+              .into(mProfilePic);
 
       mProfilePic.setOnClickListener(new View.OnClickListener()
       {
@@ -53,6 +62,30 @@ public class UserProfileActivity extends AppCompatActivity
             Intent imageIntent = new Intent(Intent.ACTION_GET_CONTENT);
             imageIntent.setType("image/*");
             startActivityForResult(imageIntent, 2);
+         }
+      });
+
+      postButton.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View v) {
+            Intent i = new Intent(UserProfileActivity.this, UserPostsActivity.class);
+            startActivity(i);
+         }
+      });
+
+      commentButton.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View v) {
+            Intent i = new Intent(UserProfileActivity.this, UserCommentsActivity.class);
+            startActivity(i);
+         }
+      });
+
+      editProfileButton.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View v) {
+            Intent i = new Intent(UserProfileActivity.this, EditProfileActivity.class);
+            startActivity(i);
          }
       });
 

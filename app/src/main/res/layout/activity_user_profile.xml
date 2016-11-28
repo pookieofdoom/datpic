@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="horizontal"
+              android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
     <ImageView
@@ -12,6 +12,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/setting_email"/>
+
+    <Button
+        android:text="Posts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/postsButton" />
+
+    <Button
+        android:text="Comments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/commentsButton" />
+
+    <Button
+        android:text="Edit Profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editProfileButton" />
 
 
 </LinearLayout>
