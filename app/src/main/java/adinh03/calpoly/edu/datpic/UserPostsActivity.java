@@ -83,7 +83,7 @@ public class UserPostsActivity extends AppCompatActivity
 
             for (DataSnapshot userSnapshot : dataSnapshot.getChildren())
             {
-               if (userSnapshot.getKey() == mFirebaseUser.getUid())
+               if (userSnapshot.getKey().equals(mFirebaseUser.getUid()))
                {
                   for (DataSnapshot imageShots : userSnapshot.getChildren())
                   {
