@@ -11,17 +11,18 @@ import android.net.Uri;
 public class Entry {
 
    private int mLikeCount, mDislikeCount;
-
    private Uri mUri;
+   private String mImageKey;
 
    public Entry() {
 
    }
 
-   public Entry(int likeCount, int dislikeCount, Uri uri) {
+   public Entry(int likeCount, int dislikeCount, Uri uri, String imageKey) {
       mLikeCount = likeCount;
       mDislikeCount = dislikeCount;
       mUri = uri;
+      mImageKey = imageKey;
    }
 
    public int getLikeCount() {
@@ -42,5 +43,15 @@ public class Entry {
 
    public void setUri(Uri uri) {
       this.mUri = uri;
+   }
+
+   public String getImageKey()
+   {
+      return mImageKey;
+   }
+
+   public void setImageKey(String imageKey)
+   {
+      this.mImageKey = imageKey;
    }
 }

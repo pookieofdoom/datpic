@@ -42,8 +42,8 @@ public class EntryFragment extends Fragment {
       RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
       recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
       ArrayList<Entry> a = new ArrayList<Entry>();
-      MyAdapter adapter = new MyAdapter(a);
-      recyclerView.setAdapter(adapter);
+      //MyAdapter adapter = new MyAdapter(a);
+      //recyclerView.setAdapter(adapter);
 
       return rootView;
    }

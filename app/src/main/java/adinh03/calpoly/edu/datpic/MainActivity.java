@@ -30,6 +30,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,7 +43,9 @@ import com.google.firebase.storage.UploadTask;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements
-      GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+      GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+      LocationListener
+{
 
    private FirebaseAuth mFirebaseAuth;
    private FirebaseUser mFirebaseUser;
@@ -54,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements
    private FirebaseDatabase mDataBase;
    private Button mTestUpload;
    private Button mViewComment;
-   private Button mGlobalImages;
+   private Button mGlobalImages, mHotButton, mNewButton;
    private User mUser;
    private static final int TEST_UPLOAD_INTENT = 2;
    private static final int USER_SETTING_INTENT = 3;
@@ -71,14 +74,16 @@ public class MainActivity extends AppCompatActivity implements
    private static double MaxRange = 0.3;
 
    @Override
-   protected void onCreate(Bundle savedInstanceState) {
+   protected void onCreate(Bundle savedInstanceState)
+   {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_main);
       // Initialize Firebase Auth
       mFirebaseAuth = FirebaseAuth.getInstance();
       mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
-      if (mFirebaseUser == null) {
+      if (mFirebaseUser == null)
+      {
          // Not logged in, launch the Log In activity
          loadLogInView();
       }
@@ -89,17 +94,18 @@ public class MainActivity extends AppCompatActivity implements
 
       // Initializing Entry Objects
       mEntryList = (ArrayList<Entry>) getLastCustomNonConfigurationInstance();
-      if (mEntryList == null) {
+      if (mEntryList == null)
+      {
          mEntryList = new ArrayList<>();
       }
       StaticEntryList.getInstance().setEntry(mEntryList);
 
-      mAdapter = new MyAdapter(mEntryList);
+      mAdapter = new MyAdapter(mEntryList, mUser);
 
       // Initializing Recycler View
       mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
       mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,
-            false));
+            true));
       //these lines of code fixed stuttering when scrolling images
       mRecyclerView.setHasFixedSize(true);
       mRecyclerView.setItemViewCacheSize(20);
@@ -112,23 +118,30 @@ public class MainActivity extends AppCompatActivity implements
       mStorage = FirebaseStorage.getInstance();
 
       if (mFirebaseUser != null)
-         mStorage.getReference().child("Photos").child(mFirebaseUser.getUid()).child("ProfilePicture")
-               .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-         @Override
-         public void onSuccess(Uri uri) {
-            mUser.setProfilePicture(uri.toString());
-         }
-      }).addOnFailureListener(new OnFailureListener() {
-         @Override
-         public void onFailure(@NonNull Exception e) {
-         }
-      });
+         mStorage.getReference().child("Photos").child(mFirebaseUser.getUid()).child
+               ("ProfilePicture")
+               .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
+         {
+            @Override
+            public void onSuccess(Uri uri)
+            {
+               mUser.setProfilePicture(uri.toString());
+            }
+         }).addOnFailureListener(new OnFailureListener()
+         {
+            @Override
+            public void onFailure(@NonNull Exception e)
+            {
+            }
+         });
 
       //Test for uploading
       mTestUpload = (Button) findViewById(R.id.testUpload);
-      mTestUpload.setOnClickListener(new View.OnClickListener() {
+      mTestUpload.setOnClickListener(new View.OnClickListener()
+      {
          @Override
-         public void onClick(View v) {
+         public void onClick(View v)
+         {
             Intent imageIntent = new Intent(Intent.ACTION_GET_CONTENT);
             imageIntent.setType("image/*");
             startActivityForResult(imageIntent, TEST_UPLOAD_INTENT);
@@ -137,72 +150,109 @@ public class MainActivity extends AppCompatActivity implements
       });
 
       mGlobalImages = (Button) findViewById(R.id.globalImages);
-      mGlobalImages.setOnClickListener(new View.OnClickListener() {
+      mGlobalImages.setOnClickListener(new View.OnClickListener()
+      {
          @Override
-         public void onClick(View view) {
+         public void onClick(View view)
+         {
+            populateAllImages();
+         }
+      });
+
+      mHotButton = (Button) findViewById(R.id.hotButton);
+      mHotButton.setOnClickListener(new View.OnClickListener()
+      {
+         @Override
+         public void onClick(View v)
+         {
+            //mRecyclerView.getLayoutManager().scrollToPosition(mEntryList.size()-1);
+            populateHotImages();
+         }
+      });
+      mNewButton = (Button) findViewById(R.id.newButton);
+      mNewButton.setOnClickListener(new View.OnClickListener()
+      {
+         @Override
+         public void onClick(View v)
+         {
+            //mRecyclerView.getLayoutManager().scrollToPosition(mEntryList.size() - 1);
             populateAllImages();
          }
       });
 
 
-
       //setup for location permission
       //asks for permission
-      permissionRequest();
+      //permissionRequest();
       //build GoogleApiClient
       buildGoogleAPI();
 
       //DatabaseReference dbRef = mDataBase.getReference();
       //Test for downloading all images (only for Vertical Prototype)
       populateLocalImages();
+      //populateAllImages();
 
 
    }
 
    @Override
-   protected void onStart() {
+   protected void onStart()
+   {
 
       super.onStart();
-      if (mGoogleApiClient != null) {
+      if (mGoogleApiClient != null)
+      {
          mGoogleApiClient.connect();
       }
    }
 
    @Override
-   protected void onResume() {
+   protected void onResume()
+   {
       super.onResume();
 
    }
 
    @Override
-   protected void onStop() {
+   protected void onStop()
+   {
       super.onStop();
 
-      if (mGoogleApiClient.isConnected()) {
+      if (mGoogleApiClient.isConnected())
+      {
          mGoogleApiClient.disconnect();
       }
    }
 
 
-   private void populateAllImages() {
+   private void populateAllImages()
+   {
 
       DatabaseReference ref = FirebaseDatabase.getInstance().getReference("images");
-      ref.addValueEventListener(new ValueEventListener() {
+      ref.addValueEventListener(new ValueEventListener()
+      {
          @Override
-         public void onDataChange(DataSnapshot dataSnapshot) {
+         public void onDataChange(DataSnapshot dataSnapshot)
+         {
             mEntryList.clear();
             boolean flag = false;
 
 
-            for (DataSnapshot imageShots : dataSnapshot.getChildren()) {
-               for (DataSnapshot urlShots : imageShots.getChildren()) {
-                  if (urlShots.getKey().equals("url")) {
+            for (DataSnapshot imageShots : dataSnapshot.getChildren())
+            {
+               for (DataSnapshot urlShots : imageShots.getChildren())
+               {
+                  if (urlShots.getKey().equals("url"))
+                  {
+                     Log.d("DEBUG69", "Url is " + urlShots.getValue(String.class));
+                     Log.d("DEBUG69", "Url is " + imageShots.getKey());
                      Uri data = Uri.parse(urlShots.getValue().toString());
-                     Entry insert = new Entry(0, 0, data);
-                     if (!mEntryList.contains(insert)) {
+                     Entry insert = new Entry(0, 0, data, "");
+                     if (!mEntryList.contains(insert))
+                     {
                         mEntryList.add(insert);
                         flag = true;
-                        StaticEntryList.getInstance().setMap(data.toString(), urlShots.getKey());
+                        StaticEntryList.getInstance().setMap(data.toString(), imageShots.getKey());
                      }
                   }
                }
@@ -211,49 +261,66 @@ public class MainActivity extends AppCompatActivity implements
                   mAdapter.notifyDataSetChanged();
             }
          }
+
          @Override
-         public void onCancelled(DatabaseError databaseError) {
+         public void onCancelled(DatabaseError databaseError)
+         {
 
          }
       });
    }
 
 
-   private void populateLocalImages() {
+   private void populateLocalImages()
+   {
 
       DatabaseReference ref = FirebaseDatabase.getInstance().getReference("images");
-      ref.addValueEventListener(new ValueEventListener() {
+      ref.addValueEventListener(new ValueEventListener()
+      {
          @Override
-         public void onDataChange(DataSnapshot dataSnapshot) {
+         public void onDataChange(DataSnapshot dataSnapshot)
+         {
             mEntryList.clear();
             boolean flag = true;
             double latitude = 0;
             double longitude = 0;
             String url = null;
+            int likeCount = 0;
             Location pictureLocation = new Location("pictureLocation");
 
-            for (DataSnapshot imageSnapshot: dataSnapshot.getChildren()) {
-               for (DataSnapshot imageInfoSnapshot: imageSnapshot.getChildren()) {
-                  if (imageInfoSnapshot.getKey().equals("latitude")) {
+            for (DataSnapshot imageSnapshot : dataSnapshot.getChildren())
+            {
+               for (DataSnapshot imageInfoSnapshot : imageSnapshot.getChildren())
+               {
+                  if (imageInfoSnapshot.getKey().equals("latitude"))
+                  {
                      latitude = Double.valueOf(imageInfoSnapshot.getValue().toString());
                   }
-                  else if (imageInfoSnapshot.getKey().equals("longitude")) {
+                  else if (imageInfoSnapshot.getKey().equals("longitude"))
+                  {
                      longitude = Double.valueOf(imageInfoSnapshot.getValue().toString());
                   }
-                  else if (imageInfoSnapshot.getKey().equals("url")) {
+                  else if (imageInfoSnapshot.getKey().equals("url"))
+                  {
                      url = imageInfoSnapshot.getValue().toString();
+                  }
+                  else if (imageInfoSnapshot.getKey().equals("LikeCount"))
+                  {
+                     likeCount = imageInfoSnapshot.getValue(Integer.class);
                   }
 
                }
 
                System.out.println("url issss: " + url);
                Uri data = Uri.parse(url);
-               Entry insert = new Entry(0, 0, data);
+               Entry insert = new Entry(likeCount, 0, data, "");
                pictureLocation.setLatitude(latitude);
                pictureLocation.setLongitude(longitude);
 
-
-               if (!mEntryList.contains(insert) && withinRange(pictureLocation, userLocation)) {
+               Log.d("DEBUG", "this is picture location :" + pictureLocation.getLatitude());
+               Log.d("DEBUG", "this is user location :" + userLocation.getLatitude());
+               if (!mEntryList.contains(insert) && withinRange(pictureLocation, userLocation))
+               {
                   mEntryList.add(insert);
                   flag = true;
                   StaticEntryList.getInstance().setMap(data.toString(), imageSnapshot.getKey());
@@ -266,13 +333,76 @@ public class MainActivity extends AppCompatActivity implements
          }
 
          @Override
-         public void onCancelled(DatabaseError databaseError) {
+         public void onCancelled(DatabaseError databaseError)
+         {
 
          }
       });
    }
 
-   private void loadLogInView() {
+   private void populateHotImages()
+   {
+      mEntryList.clear();
+      DatabaseReference ref = FirebaseDatabase.getInstance().getReference("images");
+      ref.orderByChild("LikeCount").addChildEventListener(new ChildEventListener()
+      {
+         @Override
+         public void onChildAdded(DataSnapshot dataSnapshot, String s)
+         {
+            for (DataSnapshot urlShots : dataSnapshot.getChildren())
+            {
+               Entry insert = new Entry(0, 0, null, "");
+               if (urlShots.getKey().equals("LikeCount"))
+               {
+                  insert.setLikeCount(urlShots.getValue(Integer.class));
+               }
+               if (urlShots.getKey().equals("url"))
+               {
+                  Uri data = Uri.parse(urlShots.getValue().toString());
+                  insert.setUri(data);
+                  if (!mEntryList.contains(insert))
+                  {
+                     mEntryList.add(insert);
+                     StaticEntryList.getInstance().setMap(data.toString(), urlShots.getKey());
+                  }
+               }
+
+
+            }
+            mAdapter.notifyDataSetChanged();
+
+         }
+
+         @Override
+         public void onChildChanged(DataSnapshot dataSnapshot, String s)
+         {
+
+         }
+
+         @Override
+         public void onChildRemoved(DataSnapshot dataSnapshot)
+         {
+
+         }
+
+         @Override
+         public void onChildMoved(DataSnapshot dataSnapshot, String s)
+         {
+
+         }
+
+         @Override
+         public void onCancelled(DatabaseError databaseError)
+         {
+
+         }
+      });
+
+
+   }
+
+   private void loadLogInView()
+   {
       Intent intent = new Intent(this, LogInActivity.class);
       intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -280,54 +410,66 @@ public class MainActivity extends AppCompatActivity implements
    }
 
    @Override
-   public Object onRetainCustomNonConfigurationInstance() {
+   public Object onRetainCustomNonConfigurationInstance()
+   {
       return mEntryList;
    }
 
    @Override
-   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+   protected void onActivityResult(int requestCode, int resultCode, Intent data)
+   {
       super.onActivityResult(requestCode, resultCode, data);
-      if (requestCode == TEST_UPLOAD_INTENT && resultCode == RESULT_OK) {
+      if (requestCode == TEST_UPLOAD_INTENT && resultCode == RESULT_OK)
+      {
          Uri uri = data.getData();
          StorageReference filePath = mStorage.getReference().child("Photos").child(mFirebaseUser
                .getUid()).child(Long.toString(System.currentTimeMillis()));
-         filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+         filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>()
+         {
             @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
+            {
                Toast.makeText(MainActivity.this, "Upload Done", Toast.LENGTH_LONG).show();
                Uri downloadUri = taskSnapshot.getDownloadUrl();
                storeImageToUser(downloadUri);
             }
          });
-      } else if (requestCode == USER_SETTING_INTENT && resultCode == RESULT_OK) {
+      }
+      else if (requestCode == USER_SETTING_INTENT && resultCode == RESULT_OK)
+      {
          mUser = (User) data.getSerializableExtra("UserIntent");
 
       }
    }
 
-   private void storeImageToUser(Uri uri) {
+   private void storeImageToUser(Uri uri)
+   {
       String userId = mFirebaseUser.getUid();
       DatabaseReference newEntry = mDataBase.getInstance().getReference("users").child(userId);
       DatabaseReference newImage = mDataBase.getInstance().getReference("images").push();
       String imageKey = newImage.getKey();
       newImage.child("url").setValue(uri.toString());
-      newImage.child("latitude").setValue(String.valueOf(userLocation.getLatitude()));
-      newImage.child("longitude").setValue(String.valueOf(userLocation.getLongitude()));
+//      newImage.child("latitude").setValue(String.valueOf(userLocation.getLatitude()));
+//      newImage.child("longitude").setValue(String.valueOf(userLocation.getLongitude()));
+      newImage.child("LikeCount").setValue(0);
       newEntry.child("Images").child(imageKey).setValue(uri.toString());
 
    }
 
    @Override
-   public boolean onCreateOptionsMenu(Menu menu) {
+   public boolean onCreateOptionsMenu(Menu menu)
+   {
       super.onCreateOptionsMenu(menu);
       getMenuInflater().inflate(R.menu.main_menu, menu);
       return true;
    }
 
    @Override
-   public boolean onOptionsItemSelected(MenuItem item) {
+   public boolean onOptionsItemSelected(MenuItem item)
+   {
       //return super.onOptionsItemSelected(item);
-      switch (item.getItemId()) {
+      switch (item.getItemId())
+      {
          case R.id.menu_settings:
             Intent intent = new Intent(this, UserProfileActivity.class);
             Bundle userBundle = new Bundle();
@@ -348,10 +490,14 @@ public class MainActivity extends AppCompatActivity implements
 
 
    //Location Permission
-   private void permissionRequest() {
+   private void permissionRequest()
+   {
       if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-            android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-      } else {
+            android.Manifest.permission.ACCESS_FINE_LOCATION))
+      {
+      }
+      else
+      {
          ActivityCompat.requestPermissions(this,
                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                1);
@@ -359,26 +505,36 @@ public class MainActivity extends AppCompatActivity implements
    }
 
    @Override
-   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                          @NonNull int[] grantResults)
+   {
       super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-      if (requestCode == 1) {
-         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+      if (requestCode == 1)
+      {
+         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+         {
 
             //Displaying a toast
             System.out.println("Permission granted now you can access user location ");
-         } else {
+         }
+         else
+         {
             //Displaying another toast if permission is not granted
             System.out.println("Oops you just denied the permission");
          }
-      } else {
+      }
+      else
+      {
          super.onRequestPermissionsResult(requestCode, permissions, grantResults);
       }
    }
 
 
-   private void buildGoogleAPI() {
-      if (mGoogleApiClient == null) {
+   private void buildGoogleAPI()
+   {
+      if (mGoogleApiClient == null)
+      {
          mGoogleApiClient = new GoogleApiClient.Builder(this)
                .addConnectionCallbacks(this)
                .addOnConnectionFailedListener(this)
@@ -389,28 +545,36 @@ public class MainActivity extends AppCompatActivity implements
 
 
    @Override
-   public void onLocationChanged(Location location) {
+   public void onLocationChanged(Location location)
+   {
 
    }
 
    @Override
-   public void onStatusChanged(String s, int i, Bundle bundle) {
+   public void onStatusChanged(String s, int i, Bundle bundle)
+   {
 
    }
 
    @Override
-   public void onProviderEnabled(String s) {
+   public void onProviderEnabled(String s)
+   {
 
    }
 
    @Override
-   public void onProviderDisabled(String s) {
+   public void onProviderDisabled(String s)
+   {
 
    }
 
    @Override
-   public void onConnected(@Nullable Bundle bundle) {
-      if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+   public void onConnected(@Nullable Bundle bundle)
+   {
+      if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+            PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
+            Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+      {
          // TODO: Consider calling
          //    ActivityCompat#requestPermissions
          // here to request the missing permissions, and then overriding
@@ -421,34 +585,48 @@ public class MainActivity extends AppCompatActivity implements
          return;
       }
       userLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-      if (userLocation != null) {
+      System.out.println("hello?");
+      if (userLocation != null)
+      {
          System.out.println("latitude: " + String.valueOf(userLocation.getLatitude()));
-         System.out.println("longitude: " +String.valueOf(userLocation.getLongitude()));
+         System.out.println("longitude: " + String.valueOf(userLocation.getLongitude()));
+      }
+      else
+      {
+         System.out.println("shit");
       }
 
    }
 
    @Override
-   public void onConnectionSuspended(int i) {
+   public void onConnectionSuspended(int i)
+   {
 
    }
 
    @Override
-   public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+   public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
+   {
 
    }
 
    //Determines the distance between where picture was uploaded and user
-   private boolean withinRange(Location pictureLocation, Location userLocation) {
-      if (pictureLocation.getLatitude() == userLocation.getLatitude() && pictureLocation.getLongitude() == userLocation.getLongitude()) {
+   private boolean withinRange(Location pictureLocation, Location userLocation)
+   {
+      if (pictureLocation.getLatitude() == userLocation.getLatitude() && pictureLocation
+            .getLongitude() == userLocation.getLongitude())
+      {
          return true;
       }
       int earthRadius = 6371;
-      double latDistance = Math.toRadians(pictureLocation.getLatitude() - userLocation.getLatitude());
-      double lngDistance = Math.toRadians(pictureLocation.getLongitude() - userLocation.getLongitude());
+      double latDistance = Math.toRadians(pictureLocation.getLatitude() - userLocation
+            .getLatitude());
+      double lngDistance = Math.toRadians(pictureLocation.getLongitude() - userLocation
+            .getLongitude());
 
       double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-            + Math.cos(Math.toRadians(pictureLocation.getLatitude())) * Math.cos(Math.toRadians(userLocation.getLatitude()))
+            + Math.cos(Math.toRadians(pictureLocation.getLatitude())) * Math.cos(Math.toRadians
+            (userLocation.getLatitude()))
             * Math.sin(lngDistance / 2) * Math.sin(lngDistance / 2);
 
       double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));

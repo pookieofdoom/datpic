@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.location.LocationRequest;
@@ -32,7 +33,8 @@ import java.util.ArrayList;
  * Created by Dylan on 10/30/16.
  */
 
-public class AddCommentActivity extends AppCompatActivity {
+public class AddCommentActivity extends AppCompatActivity
+{
    EditText inputComment;
    Button submitCommentButton;
    ArrayList<CommentEntry> commentList;
@@ -45,13 +47,15 @@ public class AddCommentActivity extends AppCompatActivity {
    private int clickedImageIndex;
 
    @Override
-   protected void onCreate(Bundle savedInstanceState) {
+   protected void onCreate(Bundle savedInstanceState)
+   {
       super.onCreate(savedInstanceState);
-      
+
       setContentView(R.layout.comment_activity);
 
       commentList = (ArrayList<CommentEntry>) getLastCustomNonConfigurationInstance();
-      if (commentList == null) {
+      if (commentList == null)
+      {
          commentList = new ArrayList<>();
       }
       clickedImageIndex = getIntent().getIntExtra("clickedImageIndex", -1);
@@ -71,13 +75,17 @@ public class AddCommentActivity extends AppCompatActivity {
 
       commentRecyclerView.setAdapter(adapter);
 
-      inputComment.setOnKeyListener(new View.OnKeyListener() {
+      inputComment.setOnKeyListener(new View.OnKeyListener()
+      {
          @Override
-         public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
-            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+         public boolean onKey(View view, int keyCode, KeyEvent keyEvent)
+         {
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN)
+            {
                System.out.println("Before" + inputComment.getText().toString());
 
-               if ((keyCode == KeyEvent.KEYCODE_ENTER) && isEmptyString(inputComment)) {
+               if ((keyCode == KeyEvent.KEYCODE_ENTER) && isEmptyString(inputComment))
+               {
                   addComment(inputComment, clickedImageIndex);
                   //adds comment in database for photo
                   inputComment.setText(null);
@@ -87,10 +95,13 @@ public class AddCommentActivity extends AppCompatActivity {
          }
       });
 
-      submitCommentButton.setOnClickListener(new View.OnClickListener() {
+      submitCommentButton.setOnClickListener(new View.OnClickListener()
+      {
          @Override
-         public void onClick(View view) {
-            if (isEmptyString(inputComment)) {
+         public void onClick(View view)
+         {
+            if (isEmptyString(inputComment))
+            {
                addComment(inputComment, clickedImageIndex);
                inputComment.setText(null);
 
@@ -102,13 +113,15 @@ public class AddCommentActivity extends AppCompatActivity {
    }
 
 
-   protected void addComment(EditText text, int clickedImageIndex) {
+   protected void addComment(EditText text, int clickedImageIndex)
+   {
 
       String path = StaticEntryList.getInstance().getMap().get(StaticEntryList.getInstance()
             .getEntry(clickedImageIndex).getUri().toString());
       DatabaseReference ref = mRef.child(mFirebaseUser.getUid()).child("Entry");
       String commentId = ref.push().getKey();
       ref.child(commentId).child("comment").setValue(text.getText().toString());
+      Log.d("DEBUG", "addComment: " + path);
       ref.child(commentId).child("imageLoc").setValue(path);
       CommentEntry newEntry = new CommentEntry();
       newEntry.setText(text.getText().toString());
@@ -116,16 +129,23 @@ public class AddCommentActivity extends AppCompatActivity {
       adapter.notifyDataSetChanged();
    }
 
-   private ValueEventListener populateCommentListener() {
-      return new ValueEventListener() {
+   private ValueEventListener populateCommentListener()
+   {
+      return new ValueEventListener()
+      {
          @Override
-         public void onDataChange(DataSnapshot dataSnapshot) {
+         public void onDataChange(DataSnapshot dataSnapshot)
+         {
             commentList.clear();
-            for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+            for (DataSnapshot userSnapshot : dataSnapshot.getChildren())
+            {
                Log.d("DEBUG2", "User is: " + userSnapshot.getKey());
-               for (DataSnapshot entrySnapShot : userSnapshot.getChildren()) {
-                  if (entrySnapShot.getKey().equals("Entry")) {
-                     for (DataSnapshot commentSnapShot : entrySnapShot.getChildren()) {
+               for (DataSnapshot entrySnapShot : userSnapshot.getChildren())
+               {
+                  if (entrySnapShot.getKey().equals("Entry"))
+                  {
+                     for (DataSnapshot commentSnapShot : entrySnapShot.getChildren())
+                     {
                         Log.d("DEBUG2", "CommentId is " + commentSnapShot.getKey());
                         if (commentSnapShot.child("imageLoc").getValue() != null &&
                               commentSnapShot.child("imageLoc").getValue(String.class).equals
@@ -134,11 +154,13 @@ public class AddCommentActivity extends AppCompatActivity {
                                                 ().get(StaticEntryList
                                                 .getInstance().getEntry(clickedImageIndex).getUri()
                                                 .toString
-                                                      ()))) {
+                                                      ())))
+                        {
 
                            CommentEntry insert = new CommentEntry();
                            insert.setText(commentSnapShot.child("comment").getValue(String.class));
-                           if (!commentList.contains(insert)) {
+                           if (!commentList.contains(insert))
+                           {
                               commentList.add(insert);
                               adapter.notifyDataSetChanged();
                            }
@@ -153,63 +175,75 @@ public class AddCommentActivity extends AppCompatActivity {
          }
 
          @Override
-         public void onCancelled(DatabaseError databaseError) {
+         public void onCancelled(DatabaseError databaseError)
+         {
 
          }
       };
    }
 
-   protected boolean isEmptyString(EditText text) {
+   protected boolean isEmptyString(EditText text)
+   {
       String input = text.getText().toString();
       return input.trim().length() != 0 && !TextUtils.isEmpty(input);
    }
 
 
    @Override
-   protected void onRestoreInstanceState(Bundle savedInstanceState) {
+   protected void onRestoreInstanceState(Bundle savedInstanceState)
+   {
       super.onRestoreInstanceState(savedInstanceState);
    }
 
 
-   public class CommentAdapter extends RecyclerView.Adapter<CommentHolder> {
+   public class CommentAdapter extends RecyclerView.Adapter<CommentHolder>
+   {
       private ArrayList<CommentEntry> mList;
 
-      public CommentAdapter(ArrayList<CommentEntry> list) {
+      public CommentAdapter(ArrayList<CommentEntry> list)
+      {
          mList = list;
       }
 
       @Override
-      public CommentHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+      public CommentHolder onCreateViewHolder(ViewGroup parent, int viewType)
+      {
          return new CommentHolder(LayoutInflater.from(parent.getContext()).inflate(viewType,
                parent, false));
 
       }
 
       @Override
-      public int getItemViewType(int position) {
+      public int getItemViewType(int position)
+      {
          return R.layout.comment_entry;
       }
 
       @Override
-      public void onBindViewHolder(CommentHolder holder, int position) {
+      public void onBindViewHolder(CommentHolder holder, int position)
+      {
          holder.bind(mList.get(position));
       }
 
       @Override
-      public int getItemCount() {
+      public int getItemCount()
+      {
          return mList.size();
       }
    }
 
-   public static class CommentHolder extends RecyclerView.ViewHolder {
+   public static class CommentHolder extends RecyclerView.ViewHolder
+   {
       private TextView commentTextView;
 
-      public CommentHolder(View view) {
+      public CommentHolder(View view)
+      {
          super(view);
          commentTextView = (TextView) view.findViewById(R.id.commentView);
       }
 
-      public void bind(final CommentEntry commentEntry) {
+      public void bind(final CommentEntry commentEntry)
+      {
          commentTextView.setText(commentEntry.getText());
       }
    }
