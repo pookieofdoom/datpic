@@ -21,13 +21,15 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:text="Hot">
+            android:text="Hot"
+            android:id="@+id/hotButton">
         </Button>
 
         <Button
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
+            android:id="@+id/globalImages"
             android:text="Global">
         </Button>
 
@@ -35,7 +37,8 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:text="New">
+            android:text="New"
+            android:id="@+id/newButton">
         </Button>
 
     </LinearLayout>

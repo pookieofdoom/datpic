@@ -12,28 +12,39 @@ import static adinh03.calpoly.edu.datpic.R.layout.entry;
  * Created by Anthony on 10/26/2016.
  */
 
-public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder> {
+public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
+{
    private ArrayList<Entry> mEntry;
+   private User mCurrentUser;
 
-   public MyAdapter(ArrayList<Entry> entry) {mEntry = entry;}
-
-   @Override
-   public EntryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-      return new EntryViewHolder(LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false));
+   public MyAdapter(ArrayList<Entry> entry, User currentUser)
+   {
+      mEntry = entry;
+      mCurrentUser = currentUser;
    }
 
    @Override
-   public void onBindViewHolder(EntryViewHolder holder, int position) {
+   public EntryViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+   {
+      return new EntryViewHolder(LayoutInflater.from(parent.getContext()).inflate(viewType,
+            parent, false), mCurrentUser);
+   }
+
+   @Override
+   public void onBindViewHolder(EntryViewHolder holder, int position)
+   {
       holder.bind(mEntry.get(position));
    }
 
    @Override
-   public int getItemCount() {
+   public int getItemCount()
+   {
       return mEntry.size();
    }
 
    @Override
-   public int getItemViewType(int position) {
+   public int getItemViewType(int position)
+   {
       return entry;
    }
 }

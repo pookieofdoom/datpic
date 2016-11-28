@@ -1,14 +1,8 @@
 package adinh03.calpoly.edu.datpic;
 
-import android.*;
-import android.Manifest;
-import android.content.pm.PackageManager;
+
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,18 +16,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderApi;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -48,7 +33,8 @@ import java.util.ArrayList;
  * Created by Dylan on 10/30/16.
  */
 
-public class AddCommentActivity extends AppCompatActivity {
+public class AddCommentActivity extends AppCompatActivity
+{
    EditText inputComment;
    Button submitCommentButton;
    ArrayList<CommentEntry> commentList;
@@ -60,54 +46,16 @@ public class AddCommentActivity extends AppCompatActivity {
    private FirebaseAuth mFirebaseAuth;
    private int clickedImageIndex;
 
-   private boolean mRequestLocationUpdates = false;
-   private GoogleApiClient mGoogleApiClient = null;
-   private Location userLocation = null;
-   private LocationRequest mLocationRequest;
-
-   private FusedLocationProviderApi fusedLocationProviderApi;
-
-   private static int UPDATE_INTERVAL = 10000;
-   private static int FASTEST_INTERVAL = 5000;
-   private static int DISPLACEMENT = 10;
-
    @Override
-   protected void onCreate(Bundle savedInstanceState) {
+   protected void onCreate(Bundle savedInstanceState)
+   {
       super.onCreate(savedInstanceState);
-
-      System.out.println("in adding comment activity");
-
-
-
-      /*Location stuff */
-
-//      if (mGoogleApiClient == null) {
-//         mGoogleApiClient = new GoogleApiClient.Builder(this)
-//               .addConnectionCallbacks(this)
-//               .addOnConnectionFailedListener(this)
-//               .addApi(LocationServices.API)
-//               .build();
-//      }
-
-//
-//      if (ActivityCompat.shouldShowRequestPermissionRationale(AddCommentActivity.this,
-//            Manifest.permission.ACCESS_FINE_LOCATION)) {
-//
-//      } else {
-//
-//         ActivityCompat.requestPermissions(AddCommentActivity.this,
-//               new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//               1);
-//      }
-
-
-
-      /*ends*/
 
       setContentView(R.layout.comment_activity);
 
       commentList = (ArrayList<CommentEntry>) getLastCustomNonConfigurationInstance();
-      if (commentList == null) {
+      if (commentList == null)
+      {
          commentList = new ArrayList<>();
       }
       clickedImageIndex = getIntent().getIntExtra("clickedImageIndex", -1);
@@ -127,13 +75,17 @@ public class AddCommentActivity extends AppCompatActivity {
 
       commentRecyclerView.setAdapter(adapter);
 
-      inputComment.setOnKeyListener(new View.OnKeyListener() {
+      inputComment.setOnKeyListener(new View.OnKeyListener()
+      {
          @Override
-         public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
-            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+         public boolean onKey(View view, int keyCode, KeyEvent keyEvent)
+         {
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN)
+            {
                System.out.println("Before" + inputComment.getText().toString());
 
-               if ((keyCode == KeyEvent.KEYCODE_ENTER) && isEmptyString(inputComment)) {
+               if ((keyCode == KeyEvent.KEYCODE_ENTER) && isEmptyString(inputComment))
+               {
                   addComment(inputComment, clickedImageIndex);
                   //adds comment in database for photo
                   inputComment.setText(null);
@@ -143,10 +95,13 @@ public class AddCommentActivity extends AppCompatActivity {
          }
       });
 
-      submitCommentButton.setOnClickListener(new View.OnClickListener() {
+      submitCommentButton.setOnClickListener(new View.OnClickListener()
+      {
          @Override
-         public void onClick(View view) {
-            if (isEmptyString(inputComment)) {
+         public void onClick(View view)
+         {
+            if (isEmptyString(inputComment))
+            {
                addComment(inputComment, clickedImageIndex);
                inputComment.setText(null);
 
@@ -158,13 +113,15 @@ public class AddCommentActivity extends AppCompatActivity {
    }
 
 
-   protected void addComment(EditText text, int clickedImageIndex) {
+   protected void addComment(EditText text, int clickedImageIndex)
+   {
 
       String path = StaticEntryList.getInstance().getMap().get(StaticEntryList.getInstance()
             .getEntry(clickedImageIndex).getUri().toString());
       DatabaseReference ref = mRef.child(mFirebaseUser.getUid()).child("Entry");
       String commentId = ref.push().getKey();
       ref.child(commentId).child("comment").setValue(text.getText().toString());
+      Log.d("DEBUG", "addComment: " + path);
       ref.child(commentId).child("imageLoc").setValue(path);
       CommentEntry newEntry = new CommentEntry();
       newEntry.setText(text.getText().toString());
@@ -172,17 +129,24 @@ public class AddCommentActivity extends AppCompatActivity {
       adapter.notifyDataSetChanged();
    }
 
-   private ValueEventListener populateCommentListener() {
-      return new ValueEventListener() {
+   private ValueEventListener populateCommentListener()
+   {
+      return new ValueEventListener()
+      {
          @Override
-         public void onDataChange(DataSnapshot dataSnapshot) {
+         public void onDataChange(DataSnapshot dataSnapshot)
+         {
             commentList.clear();
-            for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+            for (DataSnapshot userSnapshot : dataSnapshot.getChildren())
+            {
                Log.d("DEBUG2", "User is: " + userSnapshot.getKey());
-               for (DataSnapshot entrySnapShot : userSnapshot.getChildren()) {
-                  if (entrySnapShot.getKey().equals("Entry")) {
-                     for (DataSnapshot commentSnapShot : entrySnapShot.getChildren()) {
-                        Log.d("DEBUG2", "CommentId is " + commentSnapShot.getKey().toString());
+               for (DataSnapshot entrySnapShot : userSnapshot.getChildren())
+               {
+                  if (entrySnapShot.getKey().equals("Entry"))
+                  {
+                     for (DataSnapshot commentSnapShot : entrySnapShot.getChildren())
+                     {
+                        Log.d("DEBUG2", "CommentId is " + commentSnapShot.getKey());
                         if (commentSnapShot.child("imageLoc").getValue() != null &&
                               commentSnapShot.child("imageLoc").getValue(String.class).equals
                                     (StaticEntryList.getInstance()
@@ -190,11 +154,13 @@ public class AddCommentActivity extends AppCompatActivity {
                                                 ().get(StaticEntryList
                                                 .getInstance().getEntry(clickedImageIndex).getUri()
                                                 .toString
-                                                      ()))) {
+                                                      ())))
+                        {
 
                            CommentEntry insert = new CommentEntry();
                            insert.setText(commentSnapShot.child("comment").getValue(String.class));
-                           if (!commentList.contains(insert)) {
+                           if (!commentList.contains(insert))
+                           {
                               commentList.add(insert);
                               adapter.notifyDataSetChanged();
                            }
@@ -209,125 +175,76 @@ public class AddCommentActivity extends AppCompatActivity {
          }
 
          @Override
-         public void onCancelled(DatabaseError databaseError) {
+         public void onCancelled(DatabaseError databaseError)
+         {
 
          }
       };
    }
 
-   protected boolean isEmptyString(EditText text) {
+   protected boolean isEmptyString(EditText text)
+   {
       String input = text.getText().toString();
       return input.trim().length() != 0 && !TextUtils.isEmpty(input);
    }
 
 
    @Override
-   protected void onRestoreInstanceState(Bundle savedInstanceState) {
+   protected void onRestoreInstanceState(Bundle savedInstanceState)
+   {
       super.onRestoreInstanceState(savedInstanceState);
    }
 
 
-   public class CommentAdapter extends RecyclerView.Adapter<CommentHolder> {
+   public class CommentAdapter extends RecyclerView.Adapter<CommentHolder>
+   {
       private ArrayList<CommentEntry> mList;
 
-      public CommentAdapter(ArrayList<CommentEntry> list) {
+      public CommentAdapter(ArrayList<CommentEntry> list)
+      {
          mList = list;
       }
 
       @Override
-      public CommentHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+      public CommentHolder onCreateViewHolder(ViewGroup parent, int viewType)
+      {
          return new CommentHolder(LayoutInflater.from(parent.getContext()).inflate(viewType,
                parent, false));
 
       }
 
       @Override
-      public int getItemViewType(int position) {
+      public int getItemViewType(int position)
+      {
          return R.layout.comment_entry;
       }
 
       @Override
-      public void onBindViewHolder(CommentHolder holder, int position) {
+      public void onBindViewHolder(CommentHolder holder, int position)
+      {
          holder.bind(mList.get(position));
       }
 
       @Override
-      public int getItemCount() {
+      public int getItemCount()
+      {
          return mList.size();
       }
    }
 
-   public static class CommentHolder extends RecyclerView.ViewHolder {
+   public static class CommentHolder extends RecyclerView.ViewHolder
+   {
       private TextView commentTextView;
 
-      public CommentHolder(View view) {
+      public CommentHolder(View view)
+      {
          super(view);
          commentTextView = (TextView) view.findViewById(R.id.commentView);
       }
 
-      public void bind(final CommentEntry commentEntry) {
+      public void bind(final CommentEntry commentEntry)
+      {
          commentTextView.setText(commentEntry.getText());
       }
    }
-
-
 }
-
-
-
-
-
-//   @Override
-//   public void onConnected(@Nullable Bundle bundle) {
-//      if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//         // TODO: Consider calling
-//         //    ActivityCompat#requestPermissions
-//         // here to request the missing permissions, and then overriding
-//         //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//         //                                          int[] grantResults)
-//         // to handle the case where the user grants the permission. See the documentation
-//         // for ActivityCompat#requestPermissions for more details.
-////         ActivityCompat.requestPermissions(this,
-////               new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-////               1);
-//         return;
-//      }
-//      userLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-//      if (userLocation != null) {
-//         System.out.println(String.valueOf(userLocation.getLatitude()));
-//         System.out.println(String.valueOf(userLocation.getLongitude()));
-//      }
-//   }
-//
-//   @Override
-//   public void onConnectionSuspended(int i) {
-//
-//   }
-//
-//   @Override
-//   public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-//
-//   }
-//
-//   @Override
-//   public void onLocationChanged(Location location) {
-//
-//   }
-//
-//
-////   @Override
-////   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-////      super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-////
-////      if (requestCode == 1) {
-////         if(grantResults.length >0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-////
-////            //Displaying a toast
-////            System.out.println("Permission granted now you can read the storage");
-////         }else {
-////            //Displaying another toast if permission is not granted
-////            System.out.println("Oops you just denied the permission");
-////         }
-////      }
-////   }
-//}

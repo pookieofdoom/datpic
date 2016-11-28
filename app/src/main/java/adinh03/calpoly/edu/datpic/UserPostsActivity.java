@@ -21,94 +21,103 @@ import java.util.ArrayList;
  * Created by tjyung on 11/26/16.
  */
 
-public class UserPostsActivity extends AppCompatActivity {
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseUser mFirebaseUser;
-    private RecyclerView mRecyclerView;
-    private MyAdapter mAdapter;
-    private ArrayList<Entry> mEntryList;
+public class UserPostsActivity extends AppCompatActivity
+{
+   private FirebaseAuth mFirebaseAuth;
+   private FirebaseUser mFirebaseUser;
+   private RecyclerView mRecyclerView;
+   private MyAdapter mAdapter;
+   private ArrayList<Entry> mEntryList;
+   private User mUser;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
+   @Override
+   protected void onCreate(Bundle savedInstanceState)
+   {
+      super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.user_post_activity);
+      setContentView(R.layout.user_post_activity);
 
-        // Initialize Firebase Auth
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+      // Initialize Firebase Auth
+      mFirebaseAuth = FirebaseAuth.getInstance();
+      mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
 
-        // Initializing Entry Objects
-        mEntryList = (ArrayList<Entry>) getLastCustomNonConfigurationInstance();
-        if (mEntryList == null)
-        {
-            mEntryList = new ArrayList<>();
-        }
-        StaticEntryList.getInstance().setEntry(mEntryList);
+      // Initializing Entry Objects
+      mEntryList = (ArrayList<Entry>) getLastCustomNonConfigurationInstance();
+      if (mEntryList == null)
+      {
+         mEntryList = new ArrayList<>();
+      }
+      StaticEntryList.getInstance().setEntry(mEntryList);
+      if (mFirebaseUser != null)
+         mUser = new User(mFirebaseUser.getEmail(), mFirebaseUser.getUid());
+      mAdapter = new MyAdapter(mEntryList, mUser);
 
-        mAdapter = new MyAdapter(mEntryList);
+      // Initializing Recycler View
+      mRecyclerView = (RecyclerView) findViewById(R.id.userPostsRecyclerView);
+      mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,
+            false));
+      //these lines of code fixed stuttering when scrolling images
+      mRecyclerView.setHasFixedSize(true);
+      mRecyclerView.setItemViewCacheSize(20);
+      mRecyclerView.setDrawingCacheEnabled(true);
+      mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
-        // Initializing Recycler View
-        mRecyclerView = (RecyclerView) findViewById(R.id.userPostsRecyclerView);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,
-                false));
-        //these lines of code fixed stuttering when scrolling images
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setItemViewCacheSize(20);
-        mRecyclerView.setDrawingCacheEnabled(true);
-        mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+      mRecyclerView.setAdapter(mAdapter);
 
-        mRecyclerView.setAdapter(mAdapter);
+      populateAllImages();
 
-        populateAllImages();
+   }
 
-    }
+   private void populateAllImages()
+   {
 
-    private void populateAllImages()
-    {
+      DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
+      ref.addValueEventListener(new ValueEventListener()
+      {
+         @Override
+         public void onDataChange(DataSnapshot dataSnapshot)
+         {
+            mEntryList.clear();
+            boolean flag = false;
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
-        ref.addValueEventListener(new ValueEventListener()
-        {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
+            for (DataSnapshot userSnapshot : dataSnapshot.getChildren())
             {
-                mEntryList.clear();
-                boolean flag = false;
-
-                for (DataSnapshot userSnapshot : dataSnapshot.getChildren())
-                {
-                    if(userSnapshot.getKey().equals(mFirebaseUser.getUid())) {
-                        for (DataSnapshot imageShots : userSnapshot.getChildren()) {
-                            if (imageShots.getKey().equals("Images")) {
-                                for (DataSnapshot urlShots : imageShots.getChildren()) {
-                                    Uri data = Uri.parse(urlShots.getValue().toString());
-                                    Entry insert = new Entry(0, 0, data);
-                                    if (!mEntryList.contains(insert)) {
-                                        mEntryList.add(insert);
-                                        flag = true;
-                                        StaticEntryList.getInstance().setMap(data.toString(), urlShots.getKey());
-                                    }
-                                }
-                            }
+               if (userSnapshot.getKey() == mFirebaseUser.getUid())
+               {
+                  for (DataSnapshot imageShots : userSnapshot.getChildren())
+                  {
+                     if (imageShots.getKey().equals("Images"))
+                     {
+                        for (DataSnapshot urlShots : imageShots.getChildren())
+                        {
+                           Uri data = Uri.parse(urlShots.getValue().toString());
+                           Entry insert = new Entry(0, 0, data, "");
+                           if (!mEntryList.contains(insert))
+                           {
+                              mEntryList.add(insert);
+                              flag = true;
+                              StaticEntryList.getInstance().setMap(data.toString(), urlShots
+                                    .getKey());
+                           }
                         }
-                    }
-
-                }
-                if (flag)
-                    mAdapter.notifyDataSetChanged();
+                     }
+                  }
+               }
 
             }
+            if (flag)
+               mAdapter.notifyDataSetChanged();
 
-            @Override
-            public void onCancelled(DatabaseError databaseError)
-            {
+         }
 
-            }
-        });
+         @Override
+         public void onCancelled(DatabaseError databaseError)
+         {
+
+         }
+      });
 
 
-    }
+   }
 }
