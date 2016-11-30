@@ -54,4 +54,16 @@ public class Entry {
    {
       this.mImageKey = imageKey;
    }
+
+   @Override
+   public boolean equals(Object o)
+   {
+      if(!(o instanceof Entry)) {
+         return false;
+      }
+      if(!mUri.equals(((Entry)o).mUri)) {
+         return false;
+      }
+      return true;
+   }
 }
