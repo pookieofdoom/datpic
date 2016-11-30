@@ -189,8 +189,8 @@ public class MainActivity extends AppCompatActivity implements
 
       //DatabaseReference dbRef = mDataBase.getReference();
       //Test for downloading all images (only for Vertical Prototype)
-      populateLocalImages();
-      //populateAllImages();
+//      populateLocalImages();
+      populateAllImages();
 
 
    }
