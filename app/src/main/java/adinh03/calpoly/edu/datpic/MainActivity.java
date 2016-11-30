@@ -5,10 +5,10 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -55,12 +56,13 @@ public class MainActivity extends AppCompatActivity implements
    private DatabaseReference mDBRef;
    private FirebaseStorage mStorage;
    private FirebaseDatabase mDataBase;
-   private Button mTestUpload;
+   private Button mTestUpload, mCameraUpload;
    private Button mViewComment;
    private Button mGlobalImages, mHotButton, mNewButton;
    private User mUser;
    private static final int TEST_UPLOAD_INTENT = 2;
    private static final int USER_SETTING_INTENT = 3;
+   private static final int REQUEST_IMAGE_CAPTURE = 4;
 
 
    private boolean mRequestLocationUpdates = false;
@@ -149,6 +151,20 @@ public class MainActivity extends AppCompatActivity implements
          }
       });
 
+      mCameraUpload = (Button) findViewById(R.id.cameraUpload);
+      mCameraUpload.setOnClickListener(new View.OnClickListener()
+      {
+         @Override
+         public void onClick(View v)
+         {
+            Intent imageIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (imageIntent.resolveActivity(getPackageManager()) != null)
+            {
+               startActivityForResult(imageIntent, REQUEST_IMAGE_CAPTURE);
+            }
+         }
+      });
+
       mGlobalImages = (Button) findViewById(R.id.globalImages);
       mGlobalImages.setOnClickListener(new View.OnClickListener()
       {
@@ -165,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements
          @Override
          public void onClick(View v)
          {
-            //mRecyclerView.getLayoutManager().scrollToPosition(mEntryList.size()-1);
+            mRecyclerView.getLayoutManager().scrollToPosition(mEntryList.size() - 1);
             populateHotImages();
          }
       });
@@ -175,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements
          @Override
          public void onClick(View v)
          {
-            //mRecyclerView.getLayoutManager().scrollToPosition(mEntryList.size() - 1);
+            mRecyclerView.getLayoutManager().scrollToPosition(mEntryList.size() - 1);
             populateAllImages();
          }
       });
@@ -189,8 +205,7 @@ public class MainActivity extends AppCompatActivity implements
 
       //DatabaseReference dbRef = mDataBase.getReference();
       //Test for downloading all images (only for Vertical Prototype)
-      populateLocalImages();
-      //populateAllImages();
+//      populateLocalImages();
 
 
    }
@@ -206,23 +221,19 @@ public class MainActivity extends AppCompatActivity implements
       }
    }
 
-   @Override
-   protected void onResume()
-   {
-      super.onResume();
 
-   }
 
    @Override
-   protected void onStop()
+   protected void onDestroy()
    {
-      super.onStop();
-
+      super.onDestroy();
       if (mGoogleApiClient.isConnected())
       {
          mGoogleApiClient.disconnect();
       }
    }
+
+
 
 
    private void populateAllImages()
@@ -234,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements
          @Override
          public void onDataChange(DataSnapshot dataSnapshot)
          {
-            mEntryList.clear();
+//            mEntryList.clear();
             boolean flag = false;
 
 
@@ -251,14 +262,19 @@ public class MainActivity extends AppCompatActivity implements
                      if (!mEntryList.contains(insert))
                      {
                         mEntryList.add(insert);
+                        mAdapter.notifyItemInserted(mEntryList.size()-1);
                         flag = true;
+                        Log.d("DEBUG69", "onDataChange: " + data.toString() + " imageShots: " + imageShots.getKey());
                         StaticEntryList.getInstance().setMap(data.toString(), imageShots.getKey());
                      }
                   }
                }
 
-               if (flag)
-                  mAdapter.notifyDataSetChanged();
+//               if (flag)
+//               {
+//                  Log.d("NotifyData", "NotifyData1");
+//                  mAdapter.notifyDataSetChanged();
+//               }
             }
          }
 
@@ -280,7 +296,7 @@ public class MainActivity extends AppCompatActivity implements
          @Override
          public void onDataChange(DataSnapshot dataSnapshot)
          {
-            mEntryList.clear();
+//            mEntryList.clear();
             boolean flag = true;
             double latitude = 0;
             double longitude = 0;
@@ -319,16 +335,21 @@ public class MainActivity extends AppCompatActivity implements
 
                Log.d("DEBUG", "this is picture location :" + pictureLocation.getLatitude());
                Log.d("DEBUG", "this is user location :" + userLocation.getLatitude());
+               Log.d("DEBUG", "this is user location long: " +userLocation.getLongitude());
                if (!mEntryList.contains(insert) && withinRange(pictureLocation, userLocation))
                {
                   mEntryList.add(insert);
+                  mAdapter.notifyItemInserted(mEntryList.size()-1);
                   flag = true;
                   StaticEntryList.getInstance().setMap(data.toString(), imageSnapshot.getKey());
                }
 
             }
-            if (flag)
-               mAdapter.notifyDataSetChanged();
+//            if (flag)
+//            {
+//               Log.d("NotifyData", "NotifyData2");
+//               mAdapter.notifyDataSetChanged();
+//            }
 
          }
 
@@ -342,13 +363,14 @@ public class MainActivity extends AppCompatActivity implements
 
    private void populateHotImages()
    {
-      mEntryList.clear();
+
       DatabaseReference ref = FirebaseDatabase.getInstance().getReference("images");
       ref.orderByChild("LikeCount").addChildEventListener(new ChildEventListener()
       {
          @Override
          public void onChildAdded(DataSnapshot dataSnapshot, String s)
          {
+            boolean flag = false;
             for (DataSnapshot urlShots : dataSnapshot.getChildren())
             {
                Entry insert = new Entry(0, 0, null, "");
@@ -363,13 +385,15 @@ public class MainActivity extends AppCompatActivity implements
                   if (!mEntryList.contains(insert))
                   {
                      mEntryList.add(insert);
+                     mAdapter.notifyItemInserted(mEntryList.size()-1);
+                     flag = true;
                      StaticEntryList.getInstance().setMap(data.toString(), urlShots.getKey());
                   }
                }
 
 
             }
-            mAdapter.notifyDataSetChanged();
+
 
          }
 
@@ -422,6 +446,7 @@ public class MainActivity extends AppCompatActivity implements
       if (requestCode == TEST_UPLOAD_INTENT && resultCode == RESULT_OK)
       {
          Uri uri = data.getData();
+         System.out.println("uri data is " + uri.toString());
          StorageReference filePath = mStorage.getReference().child("Photos").child(mFirebaseUser
                .getUid()).child(Long.toString(System.currentTimeMillis()));
          filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>()
@@ -438,6 +463,9 @@ public class MainActivity extends AppCompatActivity implements
       else if (requestCode == USER_SETTING_INTENT && resultCode == RESULT_OK)
       {
          mUser = (User) data.getSerializableExtra("UserIntent");
+      }
+      else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK)
+      {
 
       }
    }
@@ -547,34 +575,19 @@ public class MainActivity extends AppCompatActivity implements
    @Override
    public void onLocationChanged(Location location)
    {
-
-   }
-
-   @Override
-   public void onStatusChanged(String s, int i, Bundle bundle)
-   {
-
-   }
-
-   @Override
-   public void onProviderEnabled(String s)
-   {
-
-   }
-
-   @Override
-   public void onProviderDisabled(String s)
-   {
-
+      Log.d("OnConnected", "OnConnected OnLocationChanged");
+      userLocation = location;
    }
 
    @Override
    public void onConnected(@Nullable Bundle bundle)
    {
+      Log.d("OnConnected", "OnConnected");
       if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
             PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
             Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
       {
+         Log.d("OnConnected", "OnConnected Failed");
          // TODO: Consider calling
          //    ActivityCompat#requestPermissions
          // here to request the missing permissions, and then overriding
@@ -584,6 +597,13 @@ public class MainActivity extends AppCompatActivity implements
          // for ActivityCompat#requestPermissions for more details.
          return;
       }
+
+      Log.d("OnConnected", "OnConnected Passed");
+      mLocationRequest = LocationRequest.create();
+      mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+      mLocationRequest.setInterval(100); // Update location every second
+      LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
       userLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
       System.out.println("hello?");
       if (userLocation != null)
@@ -595,19 +615,19 @@ public class MainActivity extends AppCompatActivity implements
       {
          System.out.println("shit");
       }
-
+      populateLocalImages();
    }
 
    @Override
    public void onConnectionSuspended(int i)
    {
-
+      Log.d("OnConnected", "OnConnected Suspended");
    }
 
    @Override
    public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
    {
-
+      Log.d("OnConnected", "OnConnected Connection Failed");
    }
 
    //Determines the distance between where picture was uploaded and user

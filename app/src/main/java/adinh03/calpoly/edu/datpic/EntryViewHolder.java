@@ -27,10 +27,10 @@ public class EntryViewHolder extends RecyclerView.ViewHolder
 {
 
    private ImageView mImage;
-   private Button mLike, mDislike, mComment, mFlag;
+   public Button mLike, mDislike, mComment, mFlag;
    private FirebaseDatabase mDataBase;
 
-   public EntryViewHolder(final View itemView, final User currentUser)
+   public EntryViewHolder(View itemView, final User currentUser) //ValueEventListener mCOmmentListener
    {
       super(itemView);
       mImage = (ImageView) itemView.findViewById(R.id.image);
@@ -41,6 +41,9 @@ public class EntryViewHolder extends RecyclerView.ViewHolder
 
       //mImage on click listener will go to bigger image
 
+      //mComment.setOnClickListener(mCommentOnClickListener);
+      itemView.setTag(currentUser);
+      itemView.setTag(R.string.viewHolder, this);
       mComment.setOnClickListener(new View.OnClickListener()
       {
          @Override
@@ -50,31 +53,22 @@ public class EntryViewHolder extends RecyclerView.ViewHolder
          }
       });
 
-      mLike.setOnTouchListener(new View.OnTouchListener()
+      mLike.setOnClickListener(new View.OnClickListener()
       {
          @Override
-         public boolean onTouch(View v, MotionEvent event)
+         public void onClick(View v)
          {
-            if (event.getAction() == MotionEvent.ACTION_DOWN)
-            {
-               if (!v.isSelected())
-               {
+            EntryViewHolder viewHolder = (EntryViewHolder) v.getTag(R.string.viewHolder);
+            User user = (User) v.getTag();
 
-                  v.getBackground().setColorFilter(new LightingColorFilter(0xFFFFFFFF, 0xFFAA0000));
-                  v.setSelected(true);
-                  setLike(true, currentUser);
-               }
-               else if (v.isSelected())
-               {
-                  v.getBackground().clearColorFilter();
-                  v.setSelected(false);
-                  setLike(false, currentUser);
-               }
-            }
 
-            return true;
+            boolean liked = !v.isSelected();
+            v.setSelected(liked);
+            //setLike(liked, user);
+            setLike(liked, currentUser);
          }
       });
+
    }
 
 
@@ -82,7 +76,7 @@ public class EntryViewHolder extends RecyclerView.ViewHolder
    {
       //load image here
       Picasso.with(mImage.getContext()).load(entry.getUri()).into(mImage);
-
+//      mLike.setSelected(entry.isLiked());
    }
 
    public void viewThisComment(View view)
@@ -95,26 +89,31 @@ public class EntryViewHolder extends RecyclerView.ViewHolder
 
    }
 
-   public void setLike(boolean isLike, User currentUser)
+
+   public void setLike(boolean isLike, User currentUser)//, ValueEventListener valueEventListener)
    {
-      String path = StaticEntryList.getInstance().getMap().get(StaticEntryList
-            .getInstance()
+      String path = StaticEntryList.getInstance().getMap().get(StaticEntryList.getInstance()
             .getEntry(getAdapterPosition()).getUri().toString());
       DatabaseReference setLike = mDataBase.getInstance().getReference("users")
             .child(currentUser.getId());
       DatabaseReference counterLike = mDataBase.getInstance().getReference("images").child(path)
             .child("LikeCount");
 
+      Log.d("What is your shit", "One Thing: " + path + " value: " + StaticEntryList.getInstance
+            ().getEntry(getAdapterPosition()).getUri());
       //like counter breaks when going to different views
 
       if (isLike)
       {
+         Log.d("What is your shit", "Shit: " + counterLike + " " + setLike);
          setLike.child("Like").child(path).setValue(true);
          counterLike.addListenerForSingleValueEvent(new ValueEventListener()
          {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot)
             {
+               Log.d("dataSnapshot", "DataSnapShot: " + dataSnapshot.toString() + " key: " +
+                     dataSnapshot.getKey() + " val: " + dataSnapshot.getValue());
                long value = (long) dataSnapshot.getValue();
                dataSnapshot.getRef().setValue(++value);
             }
@@ -134,7 +133,8 @@ public class EntryViewHolder extends RecyclerView.ViewHolder
             @Override
             public void onDataChange(DataSnapshot dataSnapshot)
             {
-               Log.d("DEBUG69", "onDataChange: " + dataSnapshot.getKey() + " " + dataSnapshot.getValue());
+               Log.d("DEBUG69", "onDataChange: " + dataSnapshot.getKey() + " " + dataSnapshot
+                     .getValue());
                long value = (long) dataSnapshot.getValue();
                dataSnapshot.getRef().setValue(--value);
             }
@@ -146,6 +146,9 @@ public class EntryViewHolder extends RecyclerView.ViewHolder
             }
          });
       }
+
+
+      //counterLike.addListenerForSingleValueEvent(valueEventListener);
    }
 
 

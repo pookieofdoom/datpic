@@ -18,6 +18,8 @@
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content"
+        android:textColor="@color/like_text_color"
+        android:background="@drawable/like_text_background"
         android:text="Like"
         android:id="@+id/like_button"/>
 

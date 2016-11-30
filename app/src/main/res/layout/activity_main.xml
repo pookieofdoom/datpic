@@ -42,12 +42,21 @@
         </Button>
 
     </LinearLayout>
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Pick Image to test uploading"
         android:id="@+id/testUpload"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Camera"
+        android:id="@+id/cameraUpload"/>
+</LinearLayout>
 
     <!--
     Might use fragment in future. For now commented out.

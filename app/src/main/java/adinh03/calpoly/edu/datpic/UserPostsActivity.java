@@ -71,7 +71,6 @@ public class UserPostsActivity extends AppCompatActivity
 
    private void populateAllImages()
    {
-
       DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
       ref.addValueEventListener(new ValueEventListener()
       {

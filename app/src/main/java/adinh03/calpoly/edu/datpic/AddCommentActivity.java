@@ -1,8 +1,11 @@
 package adinh03.calpoly.edu.datpic;
 
 
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -26,6 +30,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -39,6 +44,7 @@ public class AddCommentActivity extends AppCompatActivity
    Button submitCommentButton;
    ArrayList<CommentEntry> commentList;
    RecyclerView commentRecyclerView;
+   ImageView commentImage;
    private CommentAdapter adapter;
    DatabaseReference mRef = FirebaseDatabase.getInstance().getReference("users");
    private FirebaseDatabase mDataBase;
@@ -62,6 +68,7 @@ public class AddCommentActivity extends AppCompatActivity
       inputComment = (EditText) findViewById(R.id.InputCommentTextBox);
       submitCommentButton = (Button) findViewById(R.id.CommentSubmitButton);
       commentRecyclerView = (RecyclerView) findViewById(R.id.CommentRecylerView);
+      commentImage = (ImageView) findViewById(R.id.ImageForCommentSection);
 
       commentRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager
             .VERTICAL, false));
@@ -70,10 +77,16 @@ public class AddCommentActivity extends AppCompatActivity
       mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
       mRef.addValueEventListener(populateCommentListener());
+
+      //sets the image user that's trying to view
+      Picasso.with(this).load(StaticEntryList.getInstance().getEntry(clickedImageIndex).getUri()).into(commentImage);
+
       //after update the list
       adapter = new CommentAdapter(commentList);
 
       commentRecyclerView.setAdapter(adapter);
+      inputComment.setHintTextColor(Color.LTGRAY);
+
 
       inputComment.setOnKeyListener(new View.OnKeyListener()
       {
@@ -83,7 +96,6 @@ public class AddCommentActivity extends AppCompatActivity
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN)
             {
                System.out.println("Before" + inputComment.getText().toString());
-
                if ((keyCode == KeyEvent.KEYCODE_ENTER) && isEmptyString(inputComment))
                {
                   addComment(inputComment, clickedImageIndex);
