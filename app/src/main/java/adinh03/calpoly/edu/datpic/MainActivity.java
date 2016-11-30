@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements
 
       //setup for location permission
       //asks for permission
-      //permissionRequest();
+      permissionRequest();
       //build GoogleApiClient
       buildGoogleAPI();
 
@@ -222,7 +222,6 @@ public class MainActivity extends AppCompatActivity implements
    }
 
 
-
    @Override
    protected void onDestroy()
    {
@@ -234,8 +233,6 @@ public class MainActivity extends AppCompatActivity implements
    }
 
 
-
-
    private void populateAllImages()
    {
 
@@ -245,36 +242,23 @@ public class MainActivity extends AppCompatActivity implements
          @Override
          public void onDataChange(DataSnapshot dataSnapshot)
          {
-//            mEntryList.clear();
-            boolean flag = false;
-
-
             for (DataSnapshot imageShots : dataSnapshot.getChildren())
             {
                for (DataSnapshot urlShots : imageShots.getChildren())
                {
                   if (urlShots.getKey().equals("url"))
                   {
-                     Log.d("DEBUG69", "Url is " + urlShots.getValue(String.class));
-                     Log.d("DEBUG69", "Url is " + imageShots.getKey());
                      Uri data = Uri.parse(urlShots.getValue().toString());
                      Entry insert = new Entry(0, 0, data, "");
                      if (!mEntryList.contains(insert))
                      {
                         mEntryList.add(insert);
-                        mAdapter.notifyItemInserted(mEntryList.size()-1);
-                        flag = true;
-                        Log.d("DEBUG69", "onDataChange: " + data.toString() + " imageShots: " + imageShots.getKey());
+                        mAdapter.notifyItemInserted(mEntryList.size() - 1);
                         StaticEntryList.getInstance().setMap(data.toString(), imageShots.getKey());
                      }
                   }
                }
 
-//               if (flag)
-//               {
-//                  Log.d("NotifyData", "NotifyData1");
-//                  mAdapter.notifyDataSetChanged();
-//               }
             }
          }
 
@@ -296,8 +280,6 @@ public class MainActivity extends AppCompatActivity implements
          @Override
          public void onDataChange(DataSnapshot dataSnapshot)
          {
-//            mEntryList.clear();
-            boolean flag = true;
             double latitude = 0;
             double longitude = 0;
             String url = null;
@@ -334,22 +316,16 @@ public class MainActivity extends AppCompatActivity implements
                pictureLocation.setLongitude(longitude);
 
                Log.d("DEBUG", "this is picture location :" + pictureLocation.getLatitude());
-               Log.d("DEBUG", "this is user location :" + userLocation.getLatitude());
-               Log.d("DEBUG", "this is user location long: " +userLocation.getLongitude());
+               Log.d("DEBUG", "this is user location : (" + userLocation.getLatitude() + ", " +
+                     userLocation.getLongitude());
                if (!mEntryList.contains(insert) && withinRange(pictureLocation, userLocation))
                {
                   mEntryList.add(insert);
-                  mAdapter.notifyItemInserted(mEntryList.size()-1);
-                  flag = true;
+                  mAdapter.notifyItemInserted(mEntryList.size() - 1);
                   StaticEntryList.getInstance().setMap(data.toString(), imageSnapshot.getKey());
                }
 
             }
-//            if (flag)
-//            {
-//               Log.d("NotifyData", "NotifyData2");
-//               mAdapter.notifyDataSetChanged();
-//            }
 
          }
 
@@ -363,14 +339,12 @@ public class MainActivity extends AppCompatActivity implements
 
    private void populateHotImages()
    {
-
       DatabaseReference ref = FirebaseDatabase.getInstance().getReference("images");
       ref.orderByChild("LikeCount").addChildEventListener(new ChildEventListener()
       {
          @Override
          public void onChildAdded(DataSnapshot dataSnapshot, String s)
          {
-            boolean flag = false;
             for (DataSnapshot urlShots : dataSnapshot.getChildren())
             {
                Entry insert = new Entry(0, 0, null, "");
@@ -385,8 +359,7 @@ public class MainActivity extends AppCompatActivity implements
                   if (!mEntryList.contains(insert))
                   {
                      mEntryList.add(insert);
-                     mAdapter.notifyItemInserted(mEntryList.size()-1);
-                     flag = true;
+                     mAdapter.notifyItemInserted(mEntryList.size() - 1);
                      StaticEntryList.getInstance().setMap(data.toString(), urlShots.getKey());
                   }
                }
@@ -477,8 +450,8 @@ public class MainActivity extends AppCompatActivity implements
       DatabaseReference newImage = mDataBase.getInstance().getReference("images").push();
       String imageKey = newImage.getKey();
       newImage.child("url").setValue(uri.toString());
-//      newImage.child("latitude").setValue(String.valueOf(userLocation.getLatitude()));
-//      newImage.child("longitude").setValue(String.valueOf(userLocation.getLongitude()));
+      newImage.child("latitude").setValue(String.valueOf(userLocation.getLatitude()));
+      newImage.child("longitude").setValue(String.valueOf(userLocation.getLongitude()));
       newImage.child("LikeCount").setValue(0);
       newEntry.child("Images").child(imageKey).setValue(uri.toString());
 
@@ -598,12 +571,11 @@ public class MainActivity extends AppCompatActivity implements
          return;
       }
 
-      Log.d("OnConnected", "OnConnected Passed");
       mLocationRequest = LocationRequest.create();
       mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-      mLocationRequest.setInterval(100); // Update location every second
-      LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-
+      mLocationRequest.setInterval(60000); //about 1 minute location checking
+      LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
+            mLocationRequest, this);
       userLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
       System.out.println("hello?");
       if (userLocation != null)
