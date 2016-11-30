@@ -14,4 +14,7 @@
     <string name="add_item">Add New Item</string>
     <string name="action_logout">Logout</string>
     <string name="add_comment">Submit</string>
+    <string name="pass_no_match">Old Password Does Not Match</string>
+    <string name="new_pass_no_match">New Passwords Do Not Match</string>
+    <string name="empty_fields">Please fill out all the fields!</string>
 </resources>
