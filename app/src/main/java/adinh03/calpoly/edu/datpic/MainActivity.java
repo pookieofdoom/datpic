@@ -94,6 +94,8 @@ public class MainActivity extends AppCompatActivity implements
       if (mFirebaseUser != null)
          mUser = new User(mFirebaseUser.getEmail(), mFirebaseUser.getUid());
 
+      loadUserLikes();
+
       // Initializing Entry Objects
       mEntryList = (ArrayList<Entry>) getLastCustomNonConfigurationInstance();
       if (mEntryList == null)
@@ -206,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements
       //DatabaseReference dbRef = mDataBase.getReference();
       //Test for downloading all images (only for Vertical Prototype)
 //      populateLocalImages();
-
+      populateAllImages();
 
    }
 
@@ -235,7 +237,6 @@ public class MainActivity extends AppCompatActivity implements
 
    private void populateAllImages()
    {
-
       DatabaseReference ref = FirebaseDatabase.getInstance().getReference("images");
       ref.addValueEventListener(new ValueEventListener()
       {
@@ -249,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements
                   if (urlShots.getKey().equals("url"))
                   {
                      Uri data = Uri.parse(urlShots.getValue().toString());
-                     Entry insert = new Entry(0, 0, data, "");
+                     Entry insert = new Entry(0, 0, data, imageShots.getKey());
                      if (!mEntryList.contains(insert))
                      {
                         mEntryList.add(insert);
@@ -273,7 +274,6 @@ public class MainActivity extends AppCompatActivity implements
 
    private void populateLocalImages()
    {
-
       DatabaseReference ref = FirebaseDatabase.getInstance().getReference("images");
       ref.addValueEventListener(new ValueEventListener()
       {
@@ -309,15 +309,15 @@ public class MainActivity extends AppCompatActivity implements
 
                }
 
-               System.out.println("url issss: " + url);
+               //System.out.println("url issss: " + url);
                Uri data = Uri.parse(url);
                Entry insert = new Entry(likeCount, 0, data, "");
                pictureLocation.setLatitude(latitude);
                pictureLocation.setLongitude(longitude);
 
-               Log.d("DEBUG", "this is picture location :" + pictureLocation.getLatitude());
-               Log.d("DEBUG", "this is user location : (" + userLocation.getLatitude() + ", " +
-                     userLocation.getLongitude());
+               //Log.d("DEBUG", "this is picture location :" + pictureLocation.getLatitude());
+               //Log.d("DEBUG", "this is user location : (" + userLocation.getLatitude() + ", " +
+               //      userLocation.getLongitude());
                if (!mEntryList.contains(insert) && withinRange(pictureLocation, userLocation))
                {
                   mEntryList.add(insert);
@@ -396,6 +396,44 @@ public class MainActivity extends AppCompatActivity implements
       });
 
 
+   }
+
+   private void loadUserLikes()
+   {
+      DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users/" + mUser.getId
+            () + "/Like");
+      //careful since this only gets called once... if we ever have to do something with likes
+      //then we need to apply non single event listener
+      ref.addListenerForSingleValueEvent(new ValueEventListener()
+      {
+         @Override
+         public void onDataChange(DataSnapshot dataSnapshot)
+         {
+            for (DataSnapshot likeShots : dataSnapshot.getChildren())
+            {
+               //store all the liked photos
+               if (!mUser.getLikedPhotos().contains(likeShots.getKey()))
+               {
+                  mUser.getLikedPhotos().add(likeShots.getKey());
+
+                  for (int i = 0; i <mEntryList.size() ; i++)
+                  {
+                     if(mEntryList.get(i).getImageKey().equals(likeShots.getKey()))
+                     {
+                        mEntryList.get(i).setUserLiked(true);
+                        mAdapter.notifyItemChanged(i);
+                     }
+                  }
+               }
+            }
+         }
+
+         @Override
+         public void onCancelled(DatabaseError databaseError)
+         {
+
+         }
+      });
    }
 
    private void loadLogInView()
@@ -577,7 +615,7 @@ public class MainActivity extends AppCompatActivity implements
       LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
             mLocationRequest, this);
       userLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-      System.out.println("hello?");
+
       if (userLocation != null)
       {
          System.out.println("latitude: " + String.valueOf(userLocation.getLatitude()));

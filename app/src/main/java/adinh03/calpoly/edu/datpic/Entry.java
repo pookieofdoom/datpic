@@ -13,6 +13,7 @@ public class Entry {
    private int mLikeCount, mDislikeCount;
    private Uri mUri;
    private String mImageKey;
+   private boolean mUserLiked;
 
    public Entry() {
 
@@ -23,6 +24,7 @@ public class Entry {
       mDislikeCount = dislikeCount;
       mUri = uri;
       mImageKey = imageKey;
+      mUserLiked = false;
    }
 
    public int getLikeCount() {
@@ -65,5 +67,15 @@ public class Entry {
          return false;
       }
       return true;
+   }
+
+   public boolean getUserLiked()
+   {
+      return mUserLiked;
+   }
+
+   public void setUserLiked(boolean userLiked)
+   {
+      mUserLiked = userLiked;
    }
 }

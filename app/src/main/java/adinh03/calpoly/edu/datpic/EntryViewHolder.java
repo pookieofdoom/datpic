@@ -28,12 +28,13 @@ public class EntryViewHolder extends RecyclerView.ViewHolder
 
    private ImageView mImage;
    public Button mLike, mDislike, mComment, mFlag;
-   private FirebaseDatabase mDataBase;
+   private User mCurrentUser;
 
    public EntryViewHolder(View itemView, User currentUser, View.OnClickListener
          mCommentOnClickListener, View.OnClickListener mLikeOnClickListener)
    {
       super(itemView);
+      mCurrentUser = currentUser;
       mImage = (ImageView) itemView.findViewById(R.id.image);
       mLike = (Button) itemView.findViewById(R.id.like_button);
       mDislike = (Button) itemView.findViewById(R.id.dislike_button);
@@ -55,7 +56,7 @@ public class EntryViewHolder extends RecyclerView.ViewHolder
    {
       //load image here
       Picasso.with(mImage.getContext()).load(entry.getUri()).into(mImage);
-//      mLike.setSelected(entry.isLiked());
+      mLike.setSelected(entry.getUserLiked());
    }
 
 

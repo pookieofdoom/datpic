@@ -17,6 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import static adinh03.calpoly.edu.datpic.R.layout.entry;
+import static adinh03.calpoly.edu.datpic.R.layout.log_in_frag;
 
 /**
  * Created by Anthony on 10/26/2016.
@@ -75,6 +76,8 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
       if (isLike)
       {
          setLike.child("Like").child(path).setValue(true);
+         currentUser.getLikedPhotos().add(path);
+         //Log.d("DEBUG", "setLike: " + currentUser.getLikedPhotos().size());
          counterLike.addListenerForSingleValueEvent(new ValueEventListener()
          {
             @Override
@@ -94,6 +97,7 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
       else if (!isLike)
       {
          setLike.child("Like").child(path).removeValue();
+         currentUser.getLikedPhotos().remove(path);
          counterLike.addListenerForSingleValueEvent(new ValueEventListener()
          {
             @Override
