@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,12 +30,15 @@ public class EntryViewHolder extends RecyclerView.ViewHolder
    private ImageView mImage;
    public Button mLike, mDislike, mComment, mFlag;
    private User mCurrentUser;
+   private TextView mLocation;
+   private FirebaseDatabase mDataBase;
 
    public EntryViewHolder(View itemView, User currentUser, View.OnClickListener
          mCommentOnClickListener, View.OnClickListener mLikeOnClickListener)
    {
       super(itemView);
       mCurrentUser = currentUser;
+      mLocation = (TextView) itemView.findViewById(R.id.imageLocation);
       mImage = (ImageView) itemView.findViewById(R.id.image);
       mLike = (Button) itemView.findViewById(R.id.like_button);
       mDislike = (Button) itemView.findViewById(R.id.dislike_button);
@@ -57,6 +61,7 @@ public class EntryViewHolder extends RecyclerView.ViewHolder
       //load image here
       Picasso.with(mImage.getContext()).load(entry.getUri()).into(mImage);
       mLike.setSelected(entry.getUserLiked());
+      mLocation.setText("Posted from: " + entry.getLocation());
    }
 
 

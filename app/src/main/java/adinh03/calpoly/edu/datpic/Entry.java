@@ -14,17 +14,19 @@ public class Entry {
    private Uri mUri;
    private String mImageKey;
    private boolean mUserLiked;
+   private String mLocation;
 
    public Entry() {
 
    }
 
-   public Entry(int likeCount, int dislikeCount, Uri uri, String imageKey) {
+   public Entry(int likeCount, int dislikeCount, Uri uri, String imageKey, String location) {
       mLikeCount = likeCount;
       mDislikeCount = dislikeCount;
       mUri = uri;
       mImageKey = imageKey;
       mUserLiked = false;
+      mLocation = location;
    }
 
    public int getLikeCount() {
@@ -55,6 +57,13 @@ public class Entry {
    public void setImageKey(String imageKey)
    {
       this.mImageKey = imageKey;
+   }
+
+   public void setLocation(String location) {
+      this.mLocation = location;
+   }
+   public String getLocation() {
+      return mLocation;
    }
 
    @Override

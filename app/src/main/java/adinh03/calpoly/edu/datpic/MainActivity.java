@@ -4,6 +4,8 @@ import android.*;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -42,6 +44,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements
       GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
@@ -210,6 +214,7 @@ public class MainActivity extends AppCompatActivity implements
 //      populateLocalImages();
       populateAllImages();
 
+
    }
 
    @Override
@@ -240,6 +245,9 @@ public class MainActivity extends AppCompatActivity implements
       DatabaseReference ref = FirebaseDatabase.getInstance().getReference("images");
       ref.addValueEventListener(new ValueEventListener()
       {
+         double latitude = 0;
+         double longitude = 0;
+         List<Address> addresses;
          @Override
          public void onDataChange(DataSnapshot dataSnapshot)
          {
@@ -247,12 +255,32 @@ public class MainActivity extends AppCompatActivity implements
             {
                for (DataSnapshot urlShots : imageShots.getChildren())
                {
+                  if (urlShots.getKey().equals("latitude"))
+                  {
+                     latitude = Double.valueOf(urlShots.getValue().toString());
+                  }
+                  else if (urlShots.getKey().equals("longitude"))
+                  {
+                     longitude = Double.valueOf(urlShots.getValue().toString());
+                  }
+
                   if (urlShots.getKey().equals("url"))
                   {
                      Uri data = Uri.parse(urlShots.getValue().toString());
-                     Entry insert = new Entry(0, 0, data, imageShots.getKey());
+                     Entry insert = new Entry(0, 0, data, imageShots.getKey(), "");
                      if (!mEntryList.contains(insert))
                      {
+                        Geocoder gcd = new Geocoder(getApplicationContext(), Locale.getDefault());
+                        try {
+                           addresses = gcd.getFromLocation(latitude, longitude, 1);
+                        }
+                        catch(Exception e ) {
+                        }
+                        if (addresses.size() > 0)
+                        {
+                           insert.setLocation(addresses.get(0).getLocality());
+
+                        }
                         mEntryList.add(insert);
                         mAdapter.notifyItemInserted(mEntryList.size() - 1);
                         StaticEntryList.getInstance().setMap(data.toString(), imageShots.getKey());
@@ -311,7 +339,7 @@ public class MainActivity extends AppCompatActivity implements
 
                //System.out.println("url issss: " + url);
                Uri data = Uri.parse(url);
-               Entry insert = new Entry(likeCount, 0, data, "");
+               Entry insert = new Entry(likeCount, 0, data, "", "");
                pictureLocation.setLatitude(latitude);
                pictureLocation.setLongitude(longitude);
 
@@ -324,6 +352,7 @@ public class MainActivity extends AppCompatActivity implements
                   mAdapter.notifyItemInserted(mEntryList.size() - 1);
                   StaticEntryList.getInstance().setMap(data.toString(), imageSnapshot.getKey());
                }
+
 
             }
 
@@ -347,7 +376,7 @@ public class MainActivity extends AppCompatActivity implements
          {
             for (DataSnapshot urlShots : dataSnapshot.getChildren())
             {
-               Entry insert = new Entry(0, 0, null, "");
+               Entry insert = new Entry(0, 0, null, "", "");
                if (urlShots.getKey().equals("LikeCount"))
                {
                   insert.setLikeCount(urlShots.getValue(Integer.class));

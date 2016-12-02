@@ -1,48 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content">
-    
-    <ImageView
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/imageLocation"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/image"/>
+        android:layout_height="wrap_content"/>
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
 
     <LinearLayout
+        android:id="@+id/imageTools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/imageTools">
+        android:layout_height="match_parent">
 
         <Button
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:textColor="@color/like_text_color"
-        android:background="@drawable/like_text_background"
-        android:text="Like"
-        android:id="@+id/like_button"/>
+            android:id="@+id/like_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/like_text_background"
+            android:text="Like"
+            android:textColor="@color/like_text_color"/>
 
         <Button
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:text="Dislike"
-        android:id="@+id/dislike_button"/>
+            android:id="@+id/dislike_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Dislike"/>
 
         <Button
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:text="Comment"
-        android:id="@+id/comment_button"/>
+            android:id="@+id/comment_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Comment"/>
 
         <Button
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:text="Flag"
-        android:id="@+id/flag_button"/>
+            android:id="@+id/flag_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Flag"/>
 
     </LinearLayout>
 
