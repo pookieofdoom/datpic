@@ -1,5 +1,9 @@
 package adinh03.calpoly.edu.datpic;
 
+import android.net.Uri;
+import android.provider.ContactsContract;
+import android.widget.ImageView;
+
 import java.io.Serializable;
 
 /**
@@ -11,6 +15,8 @@ public class CommentEntry implements Serializable{
 
    }
    String text;
+   private String nickname;
+   private Uri profilePic;
 
    public void setText(String s) {
       text = s;
@@ -18,4 +24,10 @@ public class CommentEntry implements Serializable{
    public String getText() {
       return text;
    }
+
+   public void setNickname(String s) {nickname = s;}
+   public String getNickname() {return nickname;}
+
+   public void setProfilePic(Uri imageView) {profilePic = imageView;}
+   public Uri getProfilePic() {return profilePic;}
 }

@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 public class User implements Serializable
 {
-   private String mEmail, mId;
+   private String mEmail, mId, mNickname;
 
    private String mProfilePicture;
 
@@ -21,6 +21,7 @@ public class User implements Serializable
       mEmail = email;
       mId = id;
       mLikedPhotos = new ArrayList<>();
+
    }
    public User(String email, String id, ArrayList<String> likedPhotos)
    {
@@ -35,6 +36,10 @@ public class User implements Serializable
       mId = id;
       mProfilePicture = profilePicture;
    }
+
+   public void setmNickname(String nickname) { mNickname = nickname; }
+
+   public String getmNickname(){return mNickname;}
 
    public String getProfilePicture()
    {

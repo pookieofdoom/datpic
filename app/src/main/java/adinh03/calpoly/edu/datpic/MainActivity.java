@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -107,7 +108,19 @@ public class MainActivity extends AppCompatActivity implements
       if (mFirebaseUser != null)
          mUser = new User(mFirebaseUser.getEmail(), mFirebaseUser.getUid());
 
-      loadUserLikes();
+
+      Bundle bundle = getIntent().getExtras();
+      System.out.println(bundle);
+      if(bundle != null) {
+         if(bundle.containsKey("nickname")) {
+            DatabaseReference newEntry = mDataBase.getInstance().getReference("users").child(mFirebaseUser.getUid());
+            String nickname = getIntent().getStringExtra("nickname");
+            newEntry.child("nickname").setValue(nickname);
+            mUser.setmNickname(nickname);
+         }
+      }
+
+      //loadUserLikes();
 
       // Initializing Entry Objects
       mEntryList = (ArrayList<Entry>) getLastCustomNonConfigurationInstance();

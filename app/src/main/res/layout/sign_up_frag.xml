@@ -21,11 +21,20 @@
 
     </EditText>
 
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:hint="Nickname"
+        android:ems="10"
+        android:id="@+id/nicknameField"
+        android:layout_below="@+id/emailField"
+        android:contextClickable="true" />
+
     <EditText android:id="@+id/passwordField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/emailField"
-        android:layout_below="@+id/emailField"
+        android:layout_below="@+id/nicknameField"
         android:ems="10"
         android:inputType="textPassword"
         android:hint="@string/password_hint"></EditText>

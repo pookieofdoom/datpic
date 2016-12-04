@@ -15,6 +15,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * Created by tjyung on 10/28/16.
@@ -23,9 +26,13 @@ public class LogInActivity extends AppCompatActivity {
 
     protected EditText emailEditText;
     protected EditText passwordEditText;
+
     protected Button logInButton;
     protected TextView signUpTextView;
     private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
+    private FirebaseDatabase mDataBase;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -54,8 +61,10 @@ public class LogInActivity extends AppCompatActivity {
                 String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
 
+
                 email = email.trim();
                 password = password.trim();
+
 
                 if (email.isEmpty() || password.isEmpty()) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(LogInActivity.this);

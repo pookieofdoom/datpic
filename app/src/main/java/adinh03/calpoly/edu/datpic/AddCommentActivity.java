@@ -4,8 +4,10 @@ package adinh03.calpoly.edu.datpic;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +25,8 @@ import android.widget.TextView;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -30,6 +34,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -50,7 +55,9 @@ public class AddCommentActivity extends AppCompatActivity
    private FirebaseDatabase mDataBase;
    private FirebaseUser mFirebaseUser;
    private FirebaseAuth mFirebaseAuth;
+   private User mCurrentUser;
    private int clickedImageIndex;
+   private FirebaseStorage mStorage;
 
    @Override
    protected void onCreate(Bundle savedInstanceState)
@@ -58,6 +65,11 @@ public class AddCommentActivity extends AppCompatActivity
       super.onCreate(savedInstanceState);
 
       setContentView(R.layout.comment_activity);
+
+      mCurrentUser = (User) getIntent().getSerializableExtra("user");
+
+      mStorage = FirebaseStorage.getInstance();
+
 
       commentList = (ArrayList<CommentEntry>) getLastCustomNonConfigurationInstance();
       if (commentList == null)
@@ -135,8 +147,14 @@ public class AddCommentActivity extends AppCompatActivity
       ref.child(commentId).child("comment").setValue(text.getText().toString());
       Log.d("DEBUG", "addComment: " + path);
       ref.child(commentId).child("imageLoc").setValue(path);
+      ref.child(commentId).child("nickname").setValue(mCurrentUser.getmNickname());
       CommentEntry newEntry = new CommentEntry();
       newEntry.setText(text.getText().toString());
+      newEntry.setNickname(mCurrentUser.getmNickname());
+      if(mCurrentUser.getProfilePicture() != null) {
+         newEntry.setProfilePic(Uri.parse(mCurrentUser.getProfilePicture()));
+      }
+
       commentList.add(newEntry);
       adapter.notifyDataSetChanged();
    }
@@ -169,8 +187,25 @@ public class AddCommentActivity extends AppCompatActivity
                                                       ())))
                         {
 
-                           CommentEntry insert = new CommentEntry();
+                           final CommentEntry insert = new CommentEntry();
                            insert.setText(commentSnapShot.child("comment").getValue(String.class));
+                           insert.setNickname(commentSnapShot.child("nickname").getValue(String.class));
+                           mStorage.getReference().child("Photos").child(userSnapshot.getKey()).child
+                                   ("ProfilePicture")
+                                   .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
+                           {
+                              @Override
+                              public void onSuccess(Uri uri)
+                              {
+                                 insert.setProfilePic(uri);
+                              }
+                           }).addOnFailureListener(new OnFailureListener()
+                           {
+                              @Override
+                              public void onFailure(@NonNull Exception e)
+                              {
+                              }
+                           });
                            if (!commentList.contains(insert))
                            {
                               commentList.add(insert);
@@ -247,16 +282,22 @@ public class AddCommentActivity extends AppCompatActivity
    public static class CommentHolder extends RecyclerView.ViewHolder
    {
       private TextView commentTextView;
+      private TextView nicknameTextView;
+      private ImageView profilePic;
 
       public CommentHolder(View view)
       {
          super(view);
          commentTextView = (TextView) view.findViewById(R.id.commentView);
+         nicknameTextView = (TextView) view.findViewById(R.id.nicknameTextView);
+         profilePic = (ImageView) view.findViewById(R.id.userProfilePic);
       }
 
       public void bind(final CommentEntry commentEntry)
       {
          commentTextView.setText(commentEntry.getText());
+         nicknameTextView.setText(commentEntry.getNickname());
+         Picasso.with(profilePic.getContext()).load(commentEntry.getProfilePic()).resize(50,50).into(profilePic);
       }
    }
 }

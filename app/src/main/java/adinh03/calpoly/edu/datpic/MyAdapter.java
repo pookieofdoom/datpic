@@ -2,17 +2,22 @@ package adinh03.calpoly.edu.datpic;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 
@@ -28,6 +33,8 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
    private ArrayList<Entry> mEntry;
    private User mCurrentUser;
    private FirebaseDatabase mDataBase;
+   private FirebaseStorage mStorage;
+
 
    private View.OnClickListener likeClickListener = new View.OnClickListener()
    {
@@ -36,6 +43,8 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
       {
          EntryViewHolder holder = (EntryViewHolder) v.getTag(R.string.viewHolder);
          User user = (User) v.getTag(R.string.currentUser);
+         mCurrentUser = user;
+
          boolean liked = !v.isSelected();
          v.setSelected(liked);
          setLike(holder.getAdapterPosition(), liked, user);
@@ -47,6 +56,7 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
       @Override
       public void onClick(View view)
       {
+
          viewThisComment(view);
       }
    };
@@ -58,7 +68,10 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
       Intent intent = new Intent(viewHolderContext, AddCommentActivity.class);
       System.out.println("position: " + holder.getAdapterPosition());
       intent.putExtra("clickedImageIndex", holder.getAdapterPosition());
+
+      intent.putExtra("user", mCurrentUser);
       viewHolderContext.startActivity(intent);
+
 
    }
 
@@ -123,6 +136,42 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
    {
       mEntry = entry;
       mCurrentUser = currentUser;
+      mStorage = FirebaseStorage.getInstance();
+
+      if(currentUser != null) {
+         DatabaseReference getNick = mDataBase.getInstance().getReference("users")
+                 .child(mCurrentUser.getId()).child("nickname");
+         getNick.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+               System.out.println("WTF  " + (String) dataSnapshot.getValue());
+               mCurrentUser.setmNickname((String) dataSnapshot.getValue());
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+         });
+
+         mStorage.getReference().child("Photos").child(mCurrentUser.getId()).child
+                 ("ProfilePicture")
+                 .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
+         {
+            @Override
+            public void onSuccess(Uri uri)
+            {
+               mCurrentUser.setProfilePicture(uri.toString());
+            }
+         }).addOnFailureListener(new OnFailureListener()
+         {
+            @Override
+            public void onFailure(@NonNull Exception e)
+            {
+            }
+         });
+      }
    }
 
    @Override
