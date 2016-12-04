@@ -9,6 +9,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -486,9 +487,12 @@ public class MainActivity extends AppCompatActivity implements
 
 
          saveImageToFirebase(uri);
+//         new UploadImageTask().execute(uri);
       } else if (requestCode == USER_SETTING_INTENT && resultCode == RESULT_OK) {
          mUser = (User) data.getSerializableExtra("UserIntent");
       } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+//         new UploadImageTask().execute(mImageUri);
+
          saveImageToFirebase(mImageUri);
          mImageUri = null;
       }
@@ -689,3 +693,4 @@ public class MainActivity extends AppCompatActivity implements
       client.disconnect();
    }
 }
+
