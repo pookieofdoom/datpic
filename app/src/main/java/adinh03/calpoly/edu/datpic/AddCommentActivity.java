@@ -52,6 +52,7 @@ public class AddCommentActivity extends AppCompatActivity
    ImageView commentImage;
    private CommentAdapter adapter;
    DatabaseReference mRef = FirebaseDatabase.getInstance().getReference("users");
+   DatabaseReference imageRef = FirebaseDatabase.getInstance().getReference("images");
    private FirebaseDatabase mDataBase;
    private FirebaseUser mFirebaseUser;
    private FirebaseAuth mFirebaseAuth;
@@ -143,10 +144,24 @@ public class AddCommentActivity extends AppCompatActivity
       String path = StaticEntryList.getInstance().getMap().get(StaticEntryList.getInstance()
             .getEntry(clickedImageIndex).getUri().toString());
       DatabaseReference ref = mRef.child(mFirebaseUser.getUid()).child("Entry");
-      String commentId = ref.push().getKey();
+      final DatabaseReference finalRef = ref;
+      final String commentId = ref.push().getKey();
       ref.child(commentId).child("comment").setValue(text.getText().toString());
       Log.d("DEBUG", "addComment: " + path);
-      ref.child(commentId).child("imageLoc").setValue(path);
+      ref.child(commentId).child("imageData").child("imageId").setValue(path);
+      imageRef.child(path).child("url").addListenerForSingleValueEvent(new ValueEventListener() {
+         @Override
+         public void onDataChange(DataSnapshot dataSnapshot) {
+            System.out.println("test: "  + dataSnapshot.getValue());
+            finalRef.child(commentId).child("imageData").child("imageLoc").setValue(dataSnapshot.getValue());
+         }
+
+         @Override
+         public void onCancelled(DatabaseError databaseError) {
+
+         }
+      });
+
       ref.child(commentId).child("nickname").setValue(mCurrentUser.getmNickname());
       CommentEntry newEntry = new CommentEntry();
       newEntry.setText(text.getText().toString());
@@ -177,8 +192,14 @@ public class AddCommentActivity extends AppCompatActivity
                      for (DataSnapshot commentSnapShot : entrySnapShot.getChildren())
                      {
                         Log.d("DEBUG2", "CommentId is " + commentSnapShot.getKey());
-                        if (commentSnapShot.child("imageLoc").getValue() != null &&
-                              commentSnapShot.child("imageLoc").getValue(String.class).equals
+                        Log.d("DEBUG2", "IMAGE URI: " + StaticEntryList.getInstance()
+                              .getMap().get(StaticEntryList
+                                    .getInstance().getEntry(clickedImageIndex).getUri()
+                                    .toString()));
+
+                        if (commentSnapShot.child("imageData").child("imageId").getValue() != null &&
+                              commentSnapShot.child("imageData").child("imageLoc").getValue() != null &&
+                              commentSnapShot.child("imageData").child("imageId").getValue(String.class).equals
                                     (StaticEntryList.getInstance()
                                           .getMap
                                                 ().get(StaticEntryList

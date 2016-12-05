@@ -27,7 +27,7 @@ import com.squareup.picasso.Picasso;
 public class EntryViewHolder extends RecyclerView.ViewHolder
 {
 
-   private ImageView mImage;
+   public ImageView mImage;
    public Button mLike, mDislike, mComment, mFlag;
    private User mCurrentUser;
    private TextView mLocation;
