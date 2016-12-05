@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
-        android:paddingBottom="8dp"
+        android:paddingBottom="15dp"
         />
 
 
@@ -26,35 +26,29 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
+        <ImageView
             android:id="@+id/like_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/like_text_background"
-            android:text="Like"
-            android:textColor="@color/like_text_color"/>
+            android:src="@drawable/ic_thumb_up_black_24dp"
+            android:tint="@color/like_text_color"/>
 
-        <Button
+        <ImageView
             android:id="@+id/dislike_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Dislike"/>
+            android:src="@drawable/ic_thumb_down_black_24dp"
+            android:tint="@color/like_text_color"/>
 
-        <Button
+        <ImageView
             android:id="@+id/comment_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Comment"/>
-
-        <Button
-            android:id="@+id/flag_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Flag"/>
+            android:src="@drawable/ic_comment_black_24dp"
+            />
 
     </LinearLayout>
 

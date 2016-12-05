@@ -1,6 +1,8 @@
 <resources>
     <string name="viewHolder">VIEWHOLDER</string>
     <string name="currentUser">CURRENTUSER</string>
+    <string name="likeButton">LIKEBUTTON</string>
+    <string name="dislikeButton">DISLIKEBUTTON</string>
     <string name="app_name">DATPic</string>
     <string name="password_hint">Password</string>
     <string name="email_hint">Email</string>

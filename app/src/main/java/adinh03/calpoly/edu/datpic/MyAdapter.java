@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -22,7 +24,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import java.util.ArrayList;
 
 import static adinh03.calpoly.edu.datpic.R.layout.entry;
-import static adinh03.calpoly.edu.datpic.R.layout.log_in_frag;
 
 /**
  * Created by Anthony on 10/26/2016.
@@ -44,7 +45,8 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
          EntryViewHolder holder = (EntryViewHolder) v.getTag(R.string.viewHolder);
          User user = (User) v.getTag(R.string.currentUser);
          mCurrentUser = user;
-
+         ImageView dislikeButton = (ImageView) v.getTag(R.string.dislikeButton);
+         dislikeButton.setSelected(false);
          boolean liked = !v.isSelected();
          v.setSelected(liked);
          setLike(holder.getAdapterPosition(), liked, user);
@@ -58,6 +60,22 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
       {
 
          viewThisComment(view);
+      }
+   };
+
+   private View.OnClickListener dislikeClickListener = new View.OnClickListener()
+   {
+      @Override
+      public void onClick(View v)
+      {
+         EntryViewHolder holder = (EntryViewHolder) v.getTag(R.string.viewHolder);
+         User user = (User) v.getTag(R.string.currentUser);
+         mCurrentUser = user;
+         ImageView likeButton = (ImageView) v.getTag(R.string.likeButton);
+         likeButton.setSelected(false);
+         boolean disliked = !v.isSelected();
+         v.setSelected(disliked);
+         setDislike(holder.getAdapterPosition(), disliked, user);
       }
    };
 
@@ -84,53 +102,110 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
       DatabaseReference counterLike = mDataBase.getInstance().getReference("images").child(path)
             .child("LikeCount");
 
-      //like counter breaks when going to different views
 
       if (isLike)
       {
+         //if it was already disliked, remove it
+         if (currentUser.getDislikedPhotos().contains(path))
+         {
+            //removes from array
+            currentUser.getDislikedPhotos().remove(path);
+            //decrements dislike counter
+            DatabaseReference dislikeCounter = mDataBase.getInstance().getReference("images")
+                  .child(path).child("DislikeCount");
+            dislikeCounter.addListenerForSingleValueEvent(decrementCounter);
+            //unselects the dislike button (need tag for this?)
+            mEntry.get(position).setDislikeCount(mEntry.get(position).getDislikeCount() - 1);
+
+         }
          setLike.child("Like").child(path).setValue(true);
          currentUser.getLikedPhotos().add(path);
-         //Log.d("DEBUG", "setLike: " + currentUser.getLikedPhotos().size());
-         counterLike.addListenerForSingleValueEvent(new ValueEventListener()
-         {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
-            {
-               long value = (long) dataSnapshot.getValue();
-               dataSnapshot.getRef().setValue(++value);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError)
-            {
-
-            }
-         });
+         counterLike.addListenerForSingleValueEvent(incrementCounter);
+         mEntry.get(position).setLikeCount(mEntry.get(position).getLikeCount() + 1);
       }
       else if (!isLike)
       {
          setLike.child("Like").child(path).removeValue();
          currentUser.getLikedPhotos().remove(path);
-         counterLike.addListenerForSingleValueEvent(new ValueEventListener()
-         {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
-            {
-               long value = (long) dataSnapshot.getValue();
-               dataSnapshot.getRef().setValue(--value);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError)
-            {
-
-            }
-         });
+         counterLike.addListenerForSingleValueEvent(decrementCounter);
+         mEntry.get(position).setLikeCount(mEntry.get(position).getLikeCount() - 1);
       }
 
-
-      //counterLike.addListenerForSingleValueEvent(valueEventListener);
    }
+
+   private void setDislike(int position, boolean isDisliked, User currentUser)
+   {
+      String path = StaticEntryList.getInstance().getMap().get(StaticEntryList.getInstance()
+            .getEntry(position).getUri().toString());
+      DatabaseReference setLike = mDataBase.getInstance().getReference("users")
+            .child(currentUser.getId());
+      DatabaseReference counterDislike = mDataBase.getInstance().getReference("images").child(path)
+            .child("DislikeCount");
+
+
+      if (isDisliked)
+      {
+         //if it was already liked, remove it
+         if (currentUser.getLikedPhotos().contains(path))
+         {
+            //removes from array
+            currentUser.getLikedPhotos().remove(path);
+            //decrements dislike counter
+            DatabaseReference counterLike = mDataBase.getInstance().getReference("images")
+                  .child(path).child("LikeCount");
+            counterLike.addListenerForSingleValueEvent(decrementCounter);
+            mEntry.get(position).setLikeCount(mEntry.get(position).getLikeCount() - 1);
+            //unselects the dislike button (need tag for this?)
+
+         }
+         setLike.child("Like").child(path).setValue(false);
+         currentUser.getDislikedPhotos().add(path);
+
+         counterDislike.addListenerForSingleValueEvent(incrementCounter);
+         mEntry.get(position).setDislikeCount(mEntry.get(position).getDislikeCount() + 1);
+      }
+      else if (!isDisliked)
+      {
+         setLike.child("Like").child(path).removeValue();
+         currentUser.getDislikedPhotos().remove(path);
+         counterDislike.addListenerForSingleValueEvent(decrementCounter);
+         mEntry.get(position).setDislikeCount(mEntry.get(position).getDislikeCount() - 1);
+      }
+
+   }
+
+   private ValueEventListener incrementCounter = new ValueEventListener()
+   {
+      @Override
+      public void onDataChange(DataSnapshot dataSnapshot)
+      {
+         long value = (long) dataSnapshot.getValue();
+         dataSnapshot.getRef().setValue(++value);
+      }
+
+      @Override
+      public void onCancelled(DatabaseError databaseError)
+      {
+
+      }
+   };
+
+   private ValueEventListener decrementCounter = new ValueEventListener()
+   {
+      @Override
+      public void onDataChange(DataSnapshot dataSnapshot)
+      {
+         long value = (long) dataSnapshot.getValue();
+         dataSnapshot.getRef().setValue(--value);
+      }
+
+      @Override
+      public void onCancelled(DatabaseError databaseError)
+      {
+
+      }
+   };
+
 
    public MyAdapter(ArrayList<Entry> entry, User currentUser)
    {
@@ -138,26 +213,30 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
       mCurrentUser = currentUser;
       mStorage = FirebaseStorage.getInstance();
 
-      if(currentUser != null) {
+      if (currentUser != null)
+      {
          DatabaseReference getNick = mDataBase.getInstance().getReference("users")
-                 .child(mCurrentUser.getId()).child("nickname");
-         getNick.addValueEventListener(new ValueEventListener() {
+               .child(mCurrentUser.getId()).child("nickname");
+         getNick.addValueEventListener(new ValueEventListener()
+         {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(DataSnapshot dataSnapshot)
+            {
                System.out.println("WTF  " + (String) dataSnapshot.getValue());
                mCurrentUser.setmNickname((String) dataSnapshot.getValue());
 
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(DatabaseError databaseError)
+            {
 
             }
          });
 
          mStorage.getReference().child("Photos").child(mCurrentUser.getId()).child
-                 ("ProfilePicture")
-                 .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
+               ("ProfilePicture")
+               .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
          {
             @Override
             public void onSuccess(Uri uri)
@@ -178,7 +257,8 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
    public EntryViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
    {
       return new EntryViewHolder(LayoutInflater.from(parent.getContext()).inflate(viewType,
-            parent, false), mCurrentUser, commentClickListener, likeClickListener);
+            parent, false), mCurrentUser, commentClickListener, likeClickListener,
+            dislikeClickListener);
    }
 
    @Override

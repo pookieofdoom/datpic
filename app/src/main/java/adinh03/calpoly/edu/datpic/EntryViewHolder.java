@@ -28,31 +28,34 @@ public class EntryViewHolder extends RecyclerView.ViewHolder
 {
 
    private ImageView mImage;
-   public Button mLike, mDislike, mComment, mFlag;
+   public ImageView mLike, mDislike, mComment;
    private User mCurrentUser;
    private TextView mLocation;
    private FirebaseDatabase mDataBase;
 
    public EntryViewHolder(View itemView, User currentUser, View.OnClickListener
-         mCommentOnClickListener, View.OnClickListener mLikeOnClickListener)
+         mCommentOnClickListener, View.OnClickListener mLikeOnClickListener, View.OnClickListener
+         mDislikeOnClickListener)
    {
       super(itemView);
       mCurrentUser = currentUser;
       mLocation = (TextView) itemView.findViewById(R.id.imageLocation);
       mImage = (ImageView) itemView.findViewById(R.id.image);
-      mLike = (Button) itemView.findViewById(R.id.like_button);
-      mDislike = (Button) itemView.findViewById(R.id.dislike_button);
-      mComment = (Button) itemView.findViewById(R.id.comment_button);
-//      mFlag = (Button) itemView.findViewById(R.id.flag_button);
+      mLike = (ImageView) itemView.findViewById(R.id.like_button);
+      mDislike = (ImageView) itemView.findViewById(R.id.dislike_button);
+      mComment = (ImageView) itemView.findViewById(R.id.comment_button);
 
       //mImage on click listener will go to bigger image
       mComment.setTag(R.string.viewHolder, this);
       mComment.setOnClickListener(mCommentOnClickListener);
-      mLike.setTag(R.string.viewHolder,this);
+      mLike.setTag(R.string.viewHolder, this);
       mLike.setTag(R.string.currentUser, currentUser);
+      mLike.setTag(R.string.dislikeButton, mDislike);
       mLike.setOnClickListener(mLikeOnClickListener);
-
-
+      mDislike.setTag(R.string.viewHolder, this);
+      mDislike.setTag(R.string.currentUser, currentUser);
+      mDislike.setTag(R.string.likeButton, mLike);
+      mDislike.setOnClickListener(mDislikeOnClickListener);
    }
 
 
@@ -61,11 +64,9 @@ public class EntryViewHolder extends RecyclerView.ViewHolder
       //load image here
       Picasso.with(mImage.getContext()).load(entry.getUri()).into(mImage);
       mLike.setSelected(entry.getUserLiked());
+      mDislike.setSelected(!entry.getUserDisliked());
       mLocation.setText("Posted from: " + entry.getLocation());
    }
-
-
-
 
 
 }

@@ -13,7 +13,7 @@ public class Entry {
    private int mLikeCount, mDislikeCount;
    private Uri mUri;
    private String mImageKey;
-   private boolean mUserLiked;
+   private boolean mUserLiked, mUserDisliked;
    private String mLocation;
 
    public Entry() {
@@ -26,6 +26,7 @@ public class Entry {
       mUri = uri;
       mImageKey = imageKey;
       mUserLiked = false;
+      mUserDisliked = true;
       mLocation = location;
    }
 
@@ -39,6 +40,11 @@ public class Entry {
 
    public int getDislikeCount() {
       return mDislikeCount;
+   }
+
+   public void setDislikeCount(int dislikeCount)
+   {
+      mDislikeCount = dislikeCount;
    }
 
    public Uri getUri() {
@@ -87,4 +93,8 @@ public class Entry {
    {
       mUserLiked = userLiked;
    }
+
+   public boolean getUserDisliked() { return mUserDisliked; }
+
+   public void setUserDisliked(boolean userDisliked) {mUserDisliked = userDisliked;}
 }

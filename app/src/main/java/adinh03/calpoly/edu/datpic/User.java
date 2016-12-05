@@ -16,18 +16,23 @@ public class User implements Serializable
 
    private ArrayList<String> mLikedPhotos;
 
+   private ArrayList<String> mDislikedPhotos;
+
    public User(String email, String id)
    {
       mEmail = email;
       mId = id;
       mLikedPhotos = new ArrayList<>();
-
+      mDislikedPhotos = new ArrayList<>();
    }
-   public User(String email, String id, ArrayList<String> likedPhotos)
+
+   public User(String email, String id, ArrayList<String> likedPhotos, ArrayList<String>
+         dislikePhotos)
    {
       mEmail = email;
       mId = id;
       mLikedPhotos = likedPhotos;
+      mDislikedPhotos = dislikePhotos;
    }
 
    public User(String email, String id, String profilePicture)
@@ -37,9 +42,15 @@ public class User implements Serializable
       mProfilePicture = profilePicture;
    }
 
-   public void setmNickname(String nickname) { mNickname = nickname; }
+   public void setmNickname(String nickname)
+   {
+      mNickname = nickname;
+   }
 
-   public String getmNickname(){return mNickname;}
+   public String getmNickname()
+   {
+      return mNickname;
+   }
 
    public String getProfilePicture()
    {
@@ -80,4 +91,6 @@ public class User implements Serializable
    {
       this.mLikedPhotos = mLikedPhotos;
    }
+
+   public ArrayList<String> getDislikedPhotos(){ return mDislikedPhotos; }
 }
