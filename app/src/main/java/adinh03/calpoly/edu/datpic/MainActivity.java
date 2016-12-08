@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements
          @Override
          public void onClick(View v) {
             Intent imageIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            String path = Environment.getExternalStorageDirectory() + File.separator + "test.jpg";
+            /*String path = Environment.getExternalStorageDirectory() + File.separator + "test.jpg";
             File file = new File(path);
             Uri outputFileUri = Uri.fromFile(file);
             if (imageIntent.resolveActivity(getPackageManager()) != null) {
@@ -209,9 +209,9 @@ public class MainActivity extends AppCompatActivity implements
                         "impossible!", Toast.LENGTH_LONG);
                }
                mImageUri = Uri.fromFile(photo);
-               imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
+               imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);*/
                startActivityForResult(imageIntent, REQUEST_IMAGE_CAPTURE);
-            }
+            //}
          }
       });
 

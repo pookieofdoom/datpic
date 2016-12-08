@@ -318,7 +318,8 @@ public class AddCommentActivity extends AppCompatActivity
       {
          commentTextView.setText(commentEntry.getText());
          nicknameTextView.setText(commentEntry.getNickname());
-         Picasso.with(profilePic.getContext()).load(commentEntry.getProfilePic()).resize(50,50).into(profilePic);
+         Picasso.with(profilePic.getContext()).load(commentEntry.getProfilePic()).resize(200,200).into(profilePic);
       }
+
    }
 }

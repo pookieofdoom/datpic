@@ -1,5 +1,6 @@
 package adinh03.calpoly.edu.datpic;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -51,7 +52,7 @@ public class UserCommentsActivity extends AppCompatActivity {
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
-        mRef.addValueEventListener(populateCommentListener());
+        mRef.addListenerForSingleValueEvent(populateCommentListener());
 
         adapter = new CommentAdapter(commentList);
 
@@ -74,10 +75,12 @@ public class UserCommentsActivity extends AppCompatActivity {
                             if (entrySnapShot.getKey().equals("Entry")) {
                                 for (DataSnapshot commentSnapShot : entrySnapShot.getChildren()) {
                                     System.out.println("comments" + commentSnapShot.child("comment").getValue(String.class));
-                                    if (commentSnapShot.child("imageLoc").getValue() != null) {
+                                    if (commentSnapShot.child("imageData").child("imageLoc").getValue() != null) {
 
                                         CommentEntry insert = new CommentEntry();
-                                        insert.setText(commentSnapShot.child("comment").getValue(String.class));
+                                        insert.setNickname(commentSnapShot.child("comment").getValue(String.class));
+                                        System.out.println("Pic " + commentSnapShot.child("imageLoc").getValue(String.class));
+                                        insert.setProfilePic(Uri.parse(commentSnapShot.child("imageData").child("imageLoc").getValue(String.class)));
                                         if (!commentList.contains(insert)) {
                                             commentList.add(insert);
                                             adapter.notifyDataSetChanged();
