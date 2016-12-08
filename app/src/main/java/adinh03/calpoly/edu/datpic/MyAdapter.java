@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -98,7 +97,7 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
    private void setLike(int position, boolean isLike, User currentUser)
    {
       String path = StaticEntryList.getInstance().getMap().get(StaticEntryList.getInstance()
-            .getEntry(position).getUri().toString());
+            .getEntry(position).getUrl().toString());
       DatabaseReference setLike = mDataBase.getInstance().getReference("users")
             .child(currentUser.getId());
       DatabaseReference counterLike = mDataBase.getInstance().getReference("images").child(path)
@@ -138,7 +137,7 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
    private void setDislike(int position, boolean isDisliked, User currentUser)
    {
       String path = StaticEntryList.getInstance().getMap().get(StaticEntryList.getInstance()
-            .getEntry(position).getUri().toString());
+            .getEntry(position).getUrl().toString());
       DatabaseReference setLike = mDataBase.getInstance().getReference("users")
             .child(currentUser.getId());
       DatabaseReference counterDislike = mDataBase.getInstance().getReference("images").child(path)

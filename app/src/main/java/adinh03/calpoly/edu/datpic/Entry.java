@@ -11,7 +11,7 @@ import android.net.Uri;
 public class Entry {
 
    private int mLikeCount, mDislikeCount;
-   private Uri mUri;
+   private String mUri;
    private String mImageKey;
    private boolean mUserLiked, mUserDisliked;
    private String mLocation;
@@ -20,10 +20,10 @@ public class Entry {
 
    }
 
-   public Entry(int likeCount, int dislikeCount, Uri uri, String imageKey, String location) {
+   public Entry(int likeCount, int dislikeCount, String url, String imageKey, String location) {
       mLikeCount = likeCount;
       mDislikeCount = dislikeCount;
-      mUri = uri;
+      mUri = url;
       mImageKey = imageKey;
       mUserLiked = false;
       mUserDisliked = true;
@@ -47,11 +47,11 @@ public class Entry {
       mDislikeCount = dislikeCount;
    }
 
-   public Uri getUri() {
+   public String getUrl() {
       return mUri;
    }
 
-   public void setUri(Uri uri) {
+   public void setUri(String uri) {
       this.mUri = uri;
    }
 
