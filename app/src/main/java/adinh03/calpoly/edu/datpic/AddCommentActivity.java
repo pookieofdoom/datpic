@@ -2,11 +2,8 @@ package adinh03.calpoly.edu.datpic;
 
 
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,9 +19,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.FusedLocationProviderApi;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,6 +29,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -92,7 +87,11 @@ public class AddCommentActivity extends AppCompatActivity
       mRef.addValueEventListener(populateCommentListener());
 
       //sets the image user that's trying to view
-      Picasso.with(this).load(StaticEntryList.getInstance().getEntry(clickedImageIndex).getUri()).into(commentImage);
+      System.out.println("clicked image idnex: "+ clickedImageIndex);
+      System.out.println("clicked image uri: " + StaticEntryList.getInstance().getEntry(clickedImageIndex).getUrl());
+
+
+      Picasso.with(this).load(StaticEntryList.getInstance().getEntry(clickedImageIndex).getUrl()).into(commentImage);
 
       //after update the list
       adapter = new CommentAdapter(commentList);
@@ -142,7 +141,7 @@ public class AddCommentActivity extends AppCompatActivity
    {
 
       String path = StaticEntryList.getInstance().getMap().get(StaticEntryList.getInstance()
-            .getEntry(clickedImageIndex).getUri().toString());
+            .getEntry(clickedImageIndex).getUrl());
       DatabaseReference ref = mRef.child(mFirebaseUser.getUid()).child("Entry");
       final DatabaseReference finalRef = ref;
       final String commentId = ref.push().getKey();
@@ -194,8 +193,7 @@ public class AddCommentActivity extends AppCompatActivity
                         Log.d("DEBUG2", "CommentId is " + commentSnapShot.getKey());
                         Log.d("DEBUG2", "IMAGE URI: " + StaticEntryList.getInstance()
                               .getMap().get(StaticEntryList
-                                    .getInstance().getEntry(clickedImageIndex).getUri()
-                                    .toString()));
+                                    .getInstance().getEntry(clickedImageIndex).getUrl()));
 
                         if (commentSnapShot.child("imageData").child("imageId").getValue() != null &&
                               commentSnapShot.child("imageData").child("imageLoc").getValue() != null &&
@@ -203,9 +201,7 @@ public class AddCommentActivity extends AppCompatActivity
                                     (StaticEntryList.getInstance()
                                           .getMap
                                                 ().get(StaticEntryList
-                                                .getInstance().getEntry(clickedImageIndex).getUri()
-                                                .toString
-                                                      ())))
+                                                .getInstance().getEntry(clickedImageIndex).getUrl())))
                         {
 
                            final CommentEntry insert = new CommentEntry();

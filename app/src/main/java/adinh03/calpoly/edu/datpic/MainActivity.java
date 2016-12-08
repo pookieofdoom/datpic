@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -12,13 +13,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,7 +48,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -311,7 +314,7 @@ public class MainActivity extends AppCompatActivity implements
 
                   if (urlShots.getKey().equals("url")) {
                      Uri data = Uri.parse(urlShots.getValue().toString());
-                     Entry insert = new Entry(likeCount, dislikeCount, data, imageShots.getKey(),
+                     Entry insert = new Entry(likeCount, dislikeCount, urlShots.getValue().toString(), imageShots.getKey(),
                            "");
                      if (!mEntryList.contains(insert)) {
                         Geocoder gcd = new Geocoder(getApplicationContext(), Locale.getDefault());
@@ -368,7 +371,7 @@ public class MainActivity extends AppCompatActivity implements
 
                //System.out.println("url issss: " + url);
                Uri data = Uri.parse(url);
-               Entry insert = new Entry(likeCount, 0, data, "", "");
+               Entry insert = new Entry(likeCount, 0, url, "", "");
                pictureLocation.setLatitude(latitude);
                pictureLocation.setLongitude(longitude);
 
@@ -402,7 +405,7 @@ public class MainActivity extends AppCompatActivity implements
       Collections.sort(mEntryList, new HotComparator());
 
       for (int i = 0; i < mEntryList.size(); i++) {
-         Log.d("DEBUG", "populateHotImages: " + mEntryList.get(i).getUri());
+         Log.d("DEBUG", "populateHotImages: " + mEntryList.get(i).getUrl());
       }
 
       mAdapter.notifyDataSetChanged();
@@ -486,18 +489,45 @@ public class MainActivity extends AppCompatActivity implements
       if (requestCode == TEST_UPLOAD_INTENT && resultCode == RESULT_OK) {
          Uri uri = data.getData();
          System.out.println("uri data is " + uri.toString());
-
-
          saveImageToFirebase(uri);
-//         new UploadImageTask().execute(uri);
       } else if (requestCode == USER_SETTING_INTENT && resultCode == RESULT_OK) {
          mUser = (User) data.getSerializableExtra("UserIntent");
       } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-//         new UploadImageTask().execute(mImageUri);
-
-         saveImageToFirebase(mImageUri);
+         scaleImageAndStoreToFirebase(mImageUri);
          mImageUri = null;
       }
+   }
+
+   private void scaleImageAndStoreToFirebase(Uri uri) {
+      File imageFile = new File(uri.getPath());
+      Bitmap imageBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+      System.out.println("image path: " + imageFile.getAbsolutePath());
+
+      final int maxSize = 700;
+      int outWidth;
+      int outHeight;
+      int inWidth = imageBitmap.getWidth();
+      int inHeight = imageBitmap.getHeight();
+      if(inWidth > inHeight){
+         outWidth = maxSize;
+         outHeight = (inHeight * maxSize) / inWidth;
+      } else {
+         outHeight = maxSize;
+         outWidth = (inWidth * maxSize) / inHeight;
+      }
+
+      Bitmap out = Bitmap.createScaledBitmap(imageBitmap, outWidth, outHeight, false);
+      FileOutputStream fOut;
+      try {
+         fOut = new FileOutputStream(imageFile);
+         out.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+         fOut.flush();
+         fOut.close();
+         imageBitmap.recycle();
+         out.recycle();
+      } catch (Exception e) {}
+
+      saveImageToFirebase(uri);
    }
 
    public void saveImageToFirebase(Uri uri) {

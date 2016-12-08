@@ -91,7 +91,7 @@ public class UserPostsActivity extends AppCompatActivity
                         for (DataSnapshot urlShots : imageShots.getChildren())
                         {
                            Uri data = Uri.parse(urlShots.getValue().toString());
-                           Entry insert = new Entry(0, 0, data, "", "");
+                           Entry insert = new Entry(0, 0, urlShots.getValue().toString(), "", "");
                            if (!mEntryList.contains(insert))
                            {
                               mEntryList.add(insert);

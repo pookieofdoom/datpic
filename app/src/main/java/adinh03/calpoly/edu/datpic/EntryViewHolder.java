@@ -1,21 +1,11 @@
 package adinh03.calpoly.edu.datpic;
 
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.LightingColorFilter;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -62,7 +52,7 @@ public class EntryViewHolder extends RecyclerView.ViewHolder
    public void bind(Entry entry)
    {
       //load image here
-      Picasso.with(mImage.getContext()).load(entry.getUri()).into(mImage);
+      Picasso.with(mImage.getContext()).load(entry.getUrl()).into(mImage);
       mLike.setSelected(entry.getUserLiked());
       mDislike.setSelected(!entry.getUserDisliked());
       mLocation.setText("Posted from: " + entry.getLocation());
