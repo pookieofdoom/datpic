@@ -1,6 +1,8 @@
 package adinh03.calpoly.edu.datpic;
 
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.location.Location;
@@ -97,7 +99,7 @@ public class AddCommentActivity extends AppCompatActivity
       mRef.addValueEventListener(populateCommentListener());
 
       //sets the image user that's trying to view
-      Picasso.with(this).load(StaticEntryList.getInstance().getEntry(clickedImageIndex).getUri()).into(commentImage);
+      Picasso.with(this).load(StaticEntryList.getInstance().getEntry(clickedImageIndex).getUrl()).into(commentImage);
 
       //after update the list
       adapter = new CommentAdapter(commentList);
