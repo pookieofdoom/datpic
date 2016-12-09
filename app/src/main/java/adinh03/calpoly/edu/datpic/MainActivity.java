@@ -13,7 +13,6 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,7 +20,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,7 +48,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -486,11 +483,11 @@ public class MainActivity extends AppCompatActivity implements
    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
       super.onActivityResult(requestCode, resultCode, data);
       if (requestCode == TEST_UPLOAD_INTENT && resultCode == RESULT_OK) {
-         Uri uri = data.getData();
+         final Uri uri = data.getData();
+
          String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
-         Cursor cursor = getContentResolver().query(
-               uri, filePathColumn, null, null, null);
+         Cursor cursor = getContentResolver().query(uri, filePathColumn, null, null, null);
          cursor.moveToFirst();
 
          int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
@@ -510,6 +507,7 @@ public class MainActivity extends AppCompatActivity implements
                   "impossible!", Toast.LENGTH_LONG);
          }
          scaleImageAndStoreToFirebase(Uri.fromFile(photo));
+         
 
       } else if (requestCode == USER_SETTING_INTENT && resultCode == RESULT_OK) {
          mUser = (User) data.getSerializableExtra("UserIntent");
