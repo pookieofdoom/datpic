@@ -40,11 +40,12 @@ public class LargeImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Bundle bund = this.getIntent().getExtras();
         uri = bund.getString("pic");
+        System.out.println(uri);
 
 
         setContentView(R.layout.comment_post_image);
 
-        image = (ImageView)findViewById(R.id.profilePic);
+        image = (ImageView)findViewById(R.id.ImageForCommentSection);
         Picasso.with(LargeImageActivity.this).load(Uri.parse(uri)).memoryPolicy(MemoryPolicy.NO_STORE, MemoryPolicy.NO_CACHE).fit().into(image, new Callback() {
             @Override
             public void onSuccess() {
