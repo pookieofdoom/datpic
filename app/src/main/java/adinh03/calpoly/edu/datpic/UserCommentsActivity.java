@@ -131,8 +131,8 @@ public class UserCommentsActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(AddCommentActivity.CommentHolder holder, int position)
         {
-            holder.bind(mList.get(position));
-            holder.setListener(mList.get(position),UserCommentsActivity.this);
+            holder.bind(mList.get(position), "UserCommentsActivity");
+            holder.setListener(mList.get(position).getProfilePic().toString(),UserCommentsActivity.this);
         }
 
 

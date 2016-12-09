@@ -15,8 +15,8 @@
          android:id="@+id/linearLayout">
 
           <ImageView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
+              android:layout_width="50dp"
+              android:layout_height="50dp"
               app:srcCompat="@android:drawable/picture_frame"
               android:id="@+id/profilePic"
               android:transitionName="@string/transition_string"/>
@@ -25,7 +25,8 @@
               android:text="TextView"
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"
-              android:textSize="50dp"
+              android:textSize="30dp"
+              android:textStyle="bold"
               android:id="@+id/nicknameTextView" />
      </LinearLayout>
 
@@ -33,7 +34,9 @@
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
          android:id="@+id/commentView"
-         android:paddingLeft="100dp"/>
+         android:textSize="20dp"
+         android:paddingLeft="100dp"
+         android:paddingBottom="25dp"/>
 
 
 

@@ -3,6 +3,7 @@ package adinh03.calpoly.edu.datpic;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.location.Location;
@@ -74,6 +75,8 @@ public class AddCommentActivity extends AppCompatActivity
 
       setContentView(R.layout.comment_activity);
 
+      mRef.addListenerForSingleValueEvent(populateCommentListener());
+
       mCurrentUser = (User) getIntent().getSerializableExtra("user");
 
       mStorage = FirebaseStorage.getInstance();
@@ -84,11 +87,18 @@ public class AddCommentActivity extends AppCompatActivity
       {
          commentList = new ArrayList<>();
       }
-      clickedImageIndex = getIntent().getIntExtra("clickedImageIndex", -1);
+      commentImage = (ImageView) findViewById(R.id.ImageForCommentSection);
+      if(getIntent().getStringExtra("pic") != null){
+         String pic = getIntent().getStringExtra("pic");
+         Picasso.with(this).load(Uri.parse(pic)).into(commentImage);
+      }else {
+         clickedImageIndex = getIntent().getIntExtra("clickedImageIndex", -1);
+         Picasso.with(this).load(StaticEntryList.getInstance().getEntry(clickedImageIndex).getUrl()).into(commentImage);
+      }
+
       inputComment = (EditText) findViewById(R.id.InputCommentTextBox);
       submitCommentButton = (Button) findViewById(R.id.CommentSubmitButton);
       commentRecyclerView = (RecyclerView) findViewById(R.id.CommentRecylerView);
-      commentImage = (ImageView) findViewById(R.id.ImageForCommentSection);
 
       commentRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager
             .VERTICAL, false));
@@ -96,12 +106,21 @@ public class AddCommentActivity extends AppCompatActivity
       mFirebaseAuth = FirebaseAuth.getInstance();
       mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
-      mRef.addValueEventListener(populateCommentListener());
 
       //sets the image user that's trying to view
-      Picasso.with(this).load(StaticEntryList.getInstance().getEntry(clickedImageIndex).getUrl()).into(commentImage);
 
+      commentImage.setTransitionName(getString(R.string.transition_string));
+      commentImage.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View v) {
+            Intent intent = new Intent(AddCommentActivity.this,LargeImageActivity.class);
+            intent.putExtra("pic", StaticEntryList.getInstance().getEntry(clickedImageIndex).getUrl());
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(AddCommentActivity.this,(View)commentImage, getString(R.string.transition_string));
+            startActivity(intent,options.toBundle());
+         }
+      });
       //after update the list
+
       adapter = new CommentAdapter(commentList);
 
       commentRecyclerView.setAdapter(adapter);
@@ -223,6 +242,7 @@ public class AddCommentActivity extends AppCompatActivity
                               public void onSuccess(Uri uri)
                               {
                                  insert.setProfilePic(uri);
+                                 adapter.notifyDataSetChanged();
                               }
                            }).addOnFailureListener(new OnFailureListener()
                            {
@@ -294,7 +314,7 @@ public class AddCommentActivity extends AppCompatActivity
       @Override
       public void onBindViewHolder(CommentHolder holder, int position)
       {
-         holder.bind(mList.get(position));
+         holder.bind(mList.get(position), "AddCommentActivity");
       }
 
       @Override
@@ -318,25 +338,34 @@ public class AddCommentActivity extends AppCompatActivity
          profilePic = (ImageView) view.findViewById(R.id.profilePic);
       }
 
-      public void bind(final CommentEntry commentEntry)
+      public void bind(final CommentEntry commentEntry, String name)
       {
-         commentTextView.setText(commentEntry.getText());
-         nicknameTextView.setText(commentEntry.getNickname());
-         System.out.println(commentEntry.getProfilePic());
-         Picasso.with(profilePic.getContext()).load(commentEntry.getProfilePic()).memoryPolicy(MemoryPolicy.NO_STORE, MemoryPolicy.NO_CACHE).resize(200,200).into(profilePic);
+         if(name.equals("AddCommentActivity")) {
+            commentTextView.setText(commentEntry.getText());
+            nicknameTextView.setText(commentEntry.getNickname());
+            System.out.println(commentEntry.getProfilePic());
+            Picasso.with(profilePic.getContext()).load(commentEntry.getProfilePic()).placeholder(R.mipmap.ic_launcher).resize(200, 200).into(profilePic);
+         }  else {
+            commentTextView.setText(commentEntry.getText());
+            nicknameTextView.setText(commentEntry.getNickname());
+            profilePic.getLayoutParams().height = 200;
+            profilePic.getLayoutParams().width = 200;
+            nicknameTextView.setTextSize(20);
+            System.out.println("yay" + commentEntry.getProfilePic());
+            Picasso.with(profilePic.getContext()).load(commentEntry.getProfilePic()).placeholder(R.mipmap.ic_launcher).resize(200,200).into(profilePic);
+         }
       }
 
-      public void setListener(final CommentEntry commentEntry, final Context context)
+      public void setListener(final String commentEntry, final Context context)
       {
-         profilePic.setTransitionName(context.getString(R.string.transition_string));
          profilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                Intent intent = new Intent(context,LargeImageActivity.class);
-               intent.putExtra("pic", commentEntry.getProfilePic().toString());
+               intent.putExtra("pic", commentEntry);
                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((UserCommentsActivity)context,(View)profilePic, context.getString(R.string.transition_string));
                context.startActivity(intent,options.toBundle());
-            }
+         }
          });
       }
 
