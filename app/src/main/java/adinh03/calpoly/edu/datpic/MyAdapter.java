@@ -87,16 +87,7 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
       System.out.println("position: " + holder.getAdapterPosition());
       intent.putExtra("clickedImageIndex", holder.getAdapterPosition());
 
-//      ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation();
-      Pair<View, String> p1 = Pair.create((View)commentClickListener, "profile");
-//      Pair<View, String> p2 = Pair.create(vPalette, "palette");
-//
-//      ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, (View)commentClickListener, "commentTransition");
-//
-//      ActivityOptionsCompat.makeSceneTransitionAnimation()
       intent.putExtra("user", mCurrentUser);
-
-//      viewHolderContext.startActivity(intent, options.toBundle());
       viewHolderContext.startActivity(intent);
 
 
