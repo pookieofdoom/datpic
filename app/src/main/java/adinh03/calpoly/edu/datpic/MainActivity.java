@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
@@ -12,6 +13,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -175,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements
       mTestUpload.setOnClickListener(new View.OnClickListener() {
          @Override
          public void onClick(View v) {
-            Intent imageIntent = new Intent(Intent.ACTION_GET_CONTENT);
+            Intent imageIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             imageIntent.setType("image/*");
             startActivityForResult(imageIntent, TEST_UPLOAD_INTENT);
 
@@ -197,7 +199,6 @@ public class MainActivity extends AppCompatActivity implements
          @Override
          public void onClick(View v) {
             Intent imageIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            String path = Environment.getExternalStorageDirectory() + File.separator + "test.jpg";
             if (imageIntent.resolveActivity(getPackageManager()) != null) {
 
                File photo = null;
@@ -486,11 +487,34 @@ public class MainActivity extends AppCompatActivity implements
       super.onActivityResult(requestCode, resultCode, data);
       if (requestCode == TEST_UPLOAD_INTENT && resultCode == RESULT_OK) {
          Uri uri = data.getData();
-         System.out.println("uri data is " + uri.toString());
-         saveImageToFirebase(uri);
+         String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+         Cursor cursor = getContentResolver().query(
+               uri, filePathColumn, null, null, null);
+         cursor.moveToFirst();
+
+         int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+         String filePath = cursor.getString(columnIndex);
+         cursor.close();
+         Bitmap selectedImageBitmap = BitmapFactory.decodeFile(filePath);
+         File photo = null;
+         try {
+            // place where to store camera taken picture
+            photo = createTemporaryFile("picture", ".jpg");
+            photo.delete();
+            FileOutputStream fOS = new FileOutputStream(photo);
+            selectedImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, fOS);
+
+         } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Please check SD card! Image shot is " +
+                  "impossible!", Toast.LENGTH_LONG);
+         }
+         scaleImageAndStoreToFirebase(Uri.fromFile(photo));
+
       } else if (requestCode == USER_SETTING_INTENT && resultCode == RESULT_OK) {
          mUser = (User) data.getSerializableExtra("UserIntent");
       } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+
          scaleImageAndStoreToFirebase(mImageUri);
          mImageUri = null;
       }
@@ -498,15 +522,15 @@ public class MainActivity extends AppCompatActivity implements
 
    private void scaleImageAndStoreToFirebase(Uri uri) {
       File imageFile = new File(uri.getPath());
-      Bitmap imageBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
-      System.out.println("image path: " + imageFile.getAbsolutePath());
+      Bitmap imageBitmap = BitmapFactory.decodeFile(imageFile.getPath());
+      System.out.println("image path: " + imageFile.getPath());
 
       final int maxSize = 700;
       int outWidth;
       int outHeight;
       int inWidth = imageBitmap.getWidth();
       int inHeight = imageBitmap.getHeight();
-      if(inWidth > inHeight){
+      if (inWidth > inHeight) {
          outWidth = maxSize;
          outHeight = (inHeight * maxSize) / inWidth;
       } else {
@@ -523,7 +547,8 @@ public class MainActivity extends AppCompatActivity implements
          fOut.close();
          imageBitmap.recycle();
          out.recycle();
-      } catch (Exception e) {}
+      } catch (Exception e) {
+      }
 
       saveImageToFirebase(uri);
    }
@@ -593,7 +618,6 @@ public class MainActivity extends AppCompatActivity implements
          ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
       }
    }
-
 
 
    //Location Permission

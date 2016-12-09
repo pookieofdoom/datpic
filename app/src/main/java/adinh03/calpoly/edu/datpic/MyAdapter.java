@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,7 +59,6 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
       @Override
       public void onClick(View view)
       {
-
          viewThisComment(view);
       }
    };
@@ -86,9 +88,15 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
       intent.putExtra("clickedImageIndex", holder.getAdapterPosition());
 
 //      ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation();
-
+      Pair<View, String> p1 = Pair.create((View)commentClickListener, "profile");
+//      Pair<View, String> p2 = Pair.create(vPalette, "palette");
+//
+//      ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, (View)commentClickListener, "commentTransition");
+//
+//      ActivityOptionsCompat.makeSceneTransitionAnimation()
       intent.putExtra("user", mCurrentUser);
 
+//      viewHolderContext.startActivity(intent, options.toBundle());
       viewHolderContext.startActivity(intent);
 
 
