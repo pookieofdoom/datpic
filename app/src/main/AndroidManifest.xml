@@ -38,6 +38,7 @@
         <activity android:name=".UserProfileActivity"></activity>
         <activity android:name=".UserCommentsActivity"></activity>
         <activity android:name=".UserPostsActivity"></activity>
+        <activity android:name=".LargeImageActivity"></activity>
         <activity android:name=".EditProfileActivity"></activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data

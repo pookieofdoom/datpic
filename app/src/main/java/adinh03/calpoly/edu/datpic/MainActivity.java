@@ -198,7 +198,6 @@ public class MainActivity extends AppCompatActivity implements
          public void onClick(View v) {
             Intent imageIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             String path = Environment.getExternalStorageDirectory() + File.separator + "test.jpg";
-
             if (imageIntent.resolveActivity(getPackageManager()) != null) {
 
                File photo = null;

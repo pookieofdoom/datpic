@@ -18,19 +18,22 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               app:srcCompat="@android:drawable/picture_frame"
-              android:id="@+id/userProfilePic" />
+              android:id="@+id/profilePic"
+              android:transitionName="@string/transition_string"/>
 
           <TextView
               android:text="TextView"
-              android:layout_width="wrap_content"
+              android:layout_width="fill_parent"
               android:layout_height="wrap_content"
+              android:textSize="50dp"
               android:id="@+id/nicknameTextView" />
      </LinearLayout>
 
      <TextView
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
-         android:id="@+id/commentView"/>
+         android:id="@+id/commentView"
+         android:paddingLeft="100dp"/>
 
 
 
