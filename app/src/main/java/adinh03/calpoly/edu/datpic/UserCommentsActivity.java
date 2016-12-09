@@ -132,7 +132,9 @@ public class UserCommentsActivity extends AppCompatActivity {
         public void onBindViewHolder(AddCommentActivity.CommentHolder holder, int position)
         {
             holder.bind(mList.get(position));
+            holder.setListener(mList.get(position),UserCommentsActivity.this);
         }
+
 
         @Override
         public int getItemCount()

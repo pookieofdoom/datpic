@@ -2,9 +2,15 @@ package adinh03.calpoly.edu.datpic;
 
 
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +25,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderApi;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,6 +38,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -87,11 +97,7 @@ public class AddCommentActivity extends AppCompatActivity
       mRef.addValueEventListener(populateCommentListener());
 
       //sets the image user that's trying to view
-      System.out.println("clicked image idnex: "+ clickedImageIndex);
-      System.out.println("clicked image uri: " + StaticEntryList.getInstance().getEntry(clickedImageIndex).getUrl());
-
-
-      Picasso.with(this).load(StaticEntryList.getInstance().getEntry(clickedImageIndex).getUrl()).into(commentImage);
+      Picasso.with(this).load(StaticEntryList.getInstance().getEntry(clickedImageIndex).getUri()).into(commentImage);
 
       //after update the list
       adapter = new CommentAdapter(commentList);
@@ -307,14 +313,29 @@ public class AddCommentActivity extends AppCompatActivity
          super(view);
          commentTextView = (TextView) view.findViewById(R.id.commentView);
          nicknameTextView = (TextView) view.findViewById(R.id.nicknameTextView);
-         profilePic = (ImageView) view.findViewById(R.id.userProfilePic);
+         profilePic = (ImageView) view.findViewById(R.id.profilePic);
       }
 
       public void bind(final CommentEntry commentEntry)
       {
          commentTextView.setText(commentEntry.getText());
          nicknameTextView.setText(commentEntry.getNickname());
-         Picasso.with(profilePic.getContext()).load(commentEntry.getProfilePic()).resize(200,200).into(profilePic);
+         System.out.println(commentEntry.getProfilePic());
+         Picasso.with(profilePic.getContext()).load(commentEntry.getProfilePic()).memoryPolicy(MemoryPolicy.NO_STORE, MemoryPolicy.NO_CACHE).resize(200,200).into(profilePic);
+      }
+
+      public void setListener(final CommentEntry commentEntry, final Context context)
+      {
+         profilePic.setTransitionName(context.getString(R.string.transition_string));
+         profilePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               Intent intent = new Intent(context,LargeImageActivity.class);
+               intent.putExtra("pic", commentEntry.getProfilePic().toString());
+               ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((UserCommentsActivity)context,(View)profilePic, context.getString(R.string.transition_string));
+               context.startActivity(intent,options.toBundle());
+            }
+         });
       }
 
    }
