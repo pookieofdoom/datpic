@@ -48,7 +48,7 @@ public class UserPostsActivity extends AppCompatActivity
       {
          mEntryList = new ArrayList<>();
       }
-      StaticEntryList.getInstance().setEntry(mEntryList);
+      //StaticEntryList.getInstance().setEntry(mEntryList);
       if (mFirebaseUser != null)
          mUser = new User(mFirebaseUser.getEmail(), mFirebaseUser.getUid());
       mAdapter = new MyAdapter(mEntryList, mUser);
@@ -61,7 +61,7 @@ public class UserPostsActivity extends AppCompatActivity
       mRecyclerView.setHasFixedSize(true);
       mRecyclerView.setItemViewCacheSize(20);
       mRecyclerView.setDrawingCacheEnabled(true);
-      mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+      mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_LOW);
 
       mRecyclerView.setAdapter(mAdapter);
 
@@ -72,7 +72,7 @@ public class UserPostsActivity extends AppCompatActivity
    private void populateAllImages()
    {
       DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
-      ref.addValueEventListener(new ValueEventListener()
+      ref.addListenerForSingleValueEvent(new ValueEventListener()
       {
          @Override
          public void onDataChange(DataSnapshot dataSnapshot)

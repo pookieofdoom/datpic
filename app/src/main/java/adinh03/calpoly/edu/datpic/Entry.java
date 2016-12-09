@@ -13,8 +13,8 @@ public class Entry {
    private int mLikeCount, mDislikeCount;
    private String mUri;
    private String mImageKey;
-   private boolean mUserLiked, mUserDisliked;
    private String mLocation;
+   private long mUploadTime;
 
    public Entry() {
 
@@ -25,9 +25,8 @@ public class Entry {
       mDislikeCount = dislikeCount;
       mUri = url;
       mImageKey = imageKey;
-      mUserLiked = false;
-      mUserDisliked = true;
       mLocation = location;
+      mUploadTime = 0;
    }
 
    public int getLikeCount() {
@@ -84,17 +83,19 @@ public class Entry {
       return true;
    }
 
-   public boolean getUserLiked()
+
+   public long getUploadTime()
    {
-      return mUserLiked;
+      return mUploadTime;
    }
 
-   public void setUserLiked(boolean userLiked)
+   public void setUploadTime(long uploadTime)
    {
-      mUserLiked = userLiked;
+      mUploadTime = uploadTime;
    }
 
-   public boolean getUserDisliked() { return mUserDisliked; }
-
-   public void setUserDisliked(boolean userDisliked) {mUserDisliked = userDisliked;}
+   @Override
+   public String toString() {
+      return mUri + " Likes: " + mLikeCount + " dislikes: " + mDislikeCount + " Location: " + mLocation + " uploadTime: " + mUploadTime;
+   }
 }

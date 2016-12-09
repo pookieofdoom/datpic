@@ -19,16 +19,14 @@ public class EntryViewHolder extends RecyclerView.ViewHolder
    
    public ImageView mImage;
    public ImageView mLike, mDislike, mComment, mFlag;
-   private User mCurrentUser;
    private TextView mLocation;
    private FirebaseDatabase mDataBase;
 
-   public EntryViewHolder(View itemView, User currentUser, View.OnClickListener
+   public EntryViewHolder(View itemView, View.OnClickListener
          mCommentOnClickListener, View.OnClickListener mLikeOnClickListener, View.OnClickListener
          mDislikeOnClickListener)
    {
       super(itemView);
-      mCurrentUser = currentUser;
       mLocation = (TextView) itemView.findViewById(R.id.imageLocation);
       mImage = (ImageView) itemView.findViewById(R.id.image);
       mLike = (ImageView) itemView.findViewById(R.id.like_button);
@@ -39,22 +37,19 @@ public class EntryViewHolder extends RecyclerView.ViewHolder
       mComment.setTag(R.string.viewHolder, this);
       mComment.setOnClickListener(mCommentOnClickListener);
       mLike.setTag(R.string.viewHolder, this);
-      mLike.setTag(R.string.currentUser, currentUser);
-      mLike.setTag(R.string.dislikeButton, mDislike);
       mLike.setOnClickListener(mLikeOnClickListener);
       mDislike.setTag(R.string.viewHolder, this);
-      mDislike.setTag(R.string.currentUser, currentUser);
-      mDislike.setTag(R.string.likeButton, mLike);
       mDislike.setOnClickListener(mDislikeOnClickListener);
    }
 
 
-   public void bind(Entry entry)
+   public void bind(Entry entry, User user)
    {
       //load image here
       Picasso.with(mImage.getContext()).load(entry.getUrl()).into(mImage);
-      mLike.setSelected(entry.getUserLiked());
-      mDislike.setSelected(!entry.getUserDisliked());
+
+      mLike.setSelected(user.getLikedPhotos().containsKey(StaticEntryList.getInstance().getMap().get(entry.getUrl())));
+      mDislike.setSelected(user.getDislikedPhotos().containsKey(StaticEntryList.getInstance().getMap().get(entry.getUrl())));
       mLocation.setText("Posted from: " + entry.getLocation());
    }
 

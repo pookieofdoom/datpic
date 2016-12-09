@@ -17,18 +17,24 @@
         android:text="Posts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/TextIcons"
+        android:background="@color/colorAccent"
         android:id="@+id/postsButton" />
 
     <Button
         android:text="Comments"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/TextIcons"
+        android:background="@color/colorAccent"
         android:id="@+id/commentsButton" />
 
     <Button
         android:text="Edit Profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/TextIcons"
+        android:background="@color/colorAccent"
         android:id="@+id/editProfileButton" />
 
 

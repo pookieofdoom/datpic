@@ -14,19 +14,19 @@ public class User implements Serializable
 
    private String mProfilePicture;
 
-   private ArrayList<String> mLikedPhotos;
+   private HashMap<String, Boolean> mLikedPhotos;
 
-   private ArrayList<String> mDislikedPhotos;
+   private HashMap<String, Boolean> mDislikedPhotos;
 
    public User(String email, String id)
    {
       mEmail = email;
       mId = id;
-      mLikedPhotos = new ArrayList<>();
-      mDislikedPhotos = new ArrayList<>();
+      mLikedPhotos = new HashMap<String, Boolean>();
+      mDislikedPhotos = new HashMap<String, Boolean>();
    }
 
-   public User(String email, String id, ArrayList<String> likedPhotos, ArrayList<String>
+   public User(String email, String id, HashMap<String, Boolean> likedPhotos, HashMap<String, Boolean>
          dislikePhotos)
    {
       mEmail = email;
@@ -82,15 +82,15 @@ public class User implements Serializable
       this.mId = mId;
    }
 
-   public ArrayList<String> getLikedPhotos()
+   public HashMap<String, Boolean> getLikedPhotos()
    {
       return mLikedPhotos;
    }
 
-   public void setLikedPhotos(ArrayList<String> mLikedPhotos)
+   public void setLikedPhotos(HashMap<String, Boolean> mLikedPhotos)
    {
       this.mLikedPhotos = mLikedPhotos;
    }
 
-   public ArrayList<String> getDislikedPhotos(){ return mDislikedPhotos; }
+   public HashMap<String, Boolean> getDislikedPhotos(){ return mDislikedPhotos; }
 }

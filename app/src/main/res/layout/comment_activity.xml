@@ -1,48 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/comment_activity"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:layout_alignParentBottom="true"
-              android:orientation="vertical"
-              android:focusable="true"
-              android:focusableInTouchMode="true">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/comment_activity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
     <ImageView
+        android:layout_marginTop="10dp"
         android:id="@+id/ImageForCommentSection"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:transitionName="@string/transition_string"/>
+        android:transitionName="@string/transition_string" />
 
 
-    <LinearLayout
+<View
+    android:id="@+id/divider"
+    android:layout_marginTop="5dp"
+    android:layout_below="@+id/ImageForCommentSection"
+    android:layout_width="match_parent"
+    android:layout_height="2dp"
+    android:background="@color/divider"/>
+
+    <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_marginTop="5dp"
+        android:id="@+id/CommentRecylerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/divider"
+        android:layout_above="@+id/InputCommentTextBox"
+        tools:context="edu.calpoly.android.recyclerviewd.comment" />
+
 
 
         <EditText
             android:id="@+id/InputCommentTextBox"
             android:layout_width="match_parent"
             android:layout_height="53dp"
-            android:layout_weight="1"
-            android:hint="@string/your_comment"/>
+            android:layout_toLeftOf="@+id/CommentSubmitButton"
+            android:layout_alignParentBottom="true"
+            android:hint="@string/your_comment" />
 
         <Button
             android:id="@+id/CommentSubmitButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/add_comment"
-            />
+            android:layout_alignParentRight="true"
+            android:layout_height="53dp"
+            android:layout_alignParentBottom="true"
+            android:textColor="@color/TextIcons"
+            android:background="@color/colorAccent"
+            android:text="@string/add_comment" />
 
-    </LinearLayout>
-
-    <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-                                            xmlns:tools="http://schemas.android.com/tools"
-                                            android:id="@+id/CommentRecylerView"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="match_parent"
-                                            tools:context="edu.calpoly.android.recyclerviewd.comment"/>
-
-
-</LinearLayout>
+</RelativeLayout>

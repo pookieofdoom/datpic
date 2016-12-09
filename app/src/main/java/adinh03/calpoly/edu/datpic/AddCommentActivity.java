@@ -104,7 +104,7 @@ public class AddCommentActivity extends AppCompatActivity
          public void onClick(View v) {
             Intent intent = new Intent(AddCommentActivity.this,LargeImageActivity.class);
             intent.putExtra("pic", StaticEntryList.getInstance().getEntry(clickedImageIndex).getUrl());
-            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(AddCommentActivity.this,(View)commentImage, getString(R.string.transition_string));
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(AddCommentActivity.this,commentImage, getString(R.string.transition_string));
             startActivity(intent,options.toBundle());
          }
       });

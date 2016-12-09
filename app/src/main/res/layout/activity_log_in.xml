@@ -35,6 +35,8 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/passwordField"
         android:layout_below="@+id/passwordField"
+        android:background="@color/colorAccent"
+        android:textColor="@color/TextIcons"
         android:text="@string/login_button_label"></Button>
 
     <TextView android:id="@+id/signUpText"

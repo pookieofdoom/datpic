@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,13 +42,10 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
       public void onClick(View v)
       {
          EntryViewHolder holder = (EntryViewHolder) v.getTag(R.string.viewHolder);
-         User user = (User) v.getTag(R.string.currentUser);
-         mCurrentUser = user;
-         ImageView dislikeButton = (ImageView) v.getTag(R.string.dislikeButton);
-         dislikeButton.setSelected(false);
+         holder.mDislike.setSelected(false);
          boolean liked = !v.isSelected();
          v.setSelected(liked);
-         setLike(holder.getAdapterPosition(), liked, user);
+         setLike(holder.getAdapterPosition(), liked);
       }
    };
 
@@ -66,13 +64,10 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
       public void onClick(View v)
       {
          EntryViewHolder holder = (EntryViewHolder) v.getTag(R.string.viewHolder);
-         User user = (User) v.getTag(R.string.currentUser);
-         mCurrentUser = user;
-         ImageView likeButton = (ImageView) v.getTag(R.string.likeButton);
-         likeButton.setSelected(false);
+         holder.mLike.setSelected(false);
          boolean disliked = !v.isSelected();
          v.setSelected(disliked);
-         setDislike(holder.getAdapterPosition(), disliked, user);
+         setDislike(holder.getAdapterPosition(), disliked);
       }
    };
 
@@ -81,7 +76,6 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
       Context viewHolderContext = view.getContext();
       EntryViewHolder holder = (EntryViewHolder) view.getTag(R.string.viewHolder);
       Intent intent = new Intent(viewHolderContext, AddCommentActivity.class);
-      System.out.println("position: " + holder.getAdapterPosition());
       intent.putExtra("clickedImageIndex", holder.getAdapterPosition());
 
       intent.putExtra("user", mCurrentUser);
@@ -90,12 +84,11 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
 
    }
 
-   private void setLike(int position, boolean isLike, User currentUser)
+   private void setLike(int position, boolean isLike)
    {
-      String path = StaticEntryList.getInstance().getMap().get(StaticEntryList.getInstance()
-            .getEntry(position).getUrl().toString());
+      String path = StaticEntryList.getInstance().getMap().get(mEntry.get(position).getUrl());
       DatabaseReference setLike = mDataBase.getInstance().getReference("users")
-            .child(currentUser.getId());
+            .child(mCurrentUser.getId());
       DatabaseReference counterLike = mDataBase.getInstance().getReference("images").child(path)
             .child("LikeCount");
 
@@ -103,39 +96,36 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
       if (isLike)
       {
          //if it was already disliked, remove it
-         if (currentUser.getDislikedPhotos().contains(path))
+         if (mCurrentUser.getDislikedPhotos().containsKey(path))
          {
             //removes from array
-            currentUser.getDislikedPhotos().remove(path);
+            mCurrentUser.getDislikedPhotos().remove(path);
+
             //decrements dislike counter
             DatabaseReference dislikeCounter = mDataBase.getInstance().getReference("images")
                   .child(path).child("DislikeCount");
             dislikeCounter.addListenerForSingleValueEvent(decrementCounter);
             //unselects the dislike button (need tag for this?)
-            mEntry.get(position).setDislikeCount(mEntry.get(position).getDislikeCount() - 1);
 
          }
          setLike.child("Like").child(path).setValue(true);
-         currentUser.getLikedPhotos().add(path);
+         mCurrentUser.getLikedPhotos().put(path, true);
          counterLike.addListenerForSingleValueEvent(incrementCounter);
-         mEntry.get(position).setLikeCount(mEntry.get(position).getLikeCount() + 1);
       }
       else if (!isLike)
       {
          setLike.child("Like").child(path).removeValue();
-         currentUser.getLikedPhotos().remove(path);
+         mCurrentUser.getLikedPhotos().remove(path);
          counterLike.addListenerForSingleValueEvent(decrementCounter);
-         mEntry.get(position).setLikeCount(mEntry.get(position).getLikeCount() - 1);
       }
 
    }
 
-   private void setDislike(int position, boolean isDisliked, User currentUser)
+   private void setDislike(int position, boolean isDisliked)
    {
-      String path = StaticEntryList.getInstance().getMap().get(StaticEntryList.getInstance()
-            .getEntry(position).getUrl().toString());
+      String path = StaticEntryList.getInstance().getMap().get(mEntry.get(position).getUrl());
       DatabaseReference setLike = mDataBase.getInstance().getReference("users")
-            .child(currentUser.getId());
+            .child(mCurrentUser.getId());
       DatabaseReference counterDislike = mDataBase.getInstance().getReference("images").child(path)
             .child("DislikeCount");
 
@@ -143,30 +133,27 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
       if (isDisliked)
       {
          //if it was already liked, remove it
-         if (currentUser.getLikedPhotos().contains(path))
+         if (mCurrentUser.getLikedPhotos().containsKey(path))
          {
             //removes from array
-            currentUser.getLikedPhotos().remove(path);
+            mCurrentUser.getLikedPhotos().remove(path);
             //decrements dislike counter
             DatabaseReference counterLike = mDataBase.getInstance().getReference("images")
                   .child(path).child("LikeCount");
             counterLike.addListenerForSingleValueEvent(decrementCounter);
-            mEntry.get(position).setLikeCount(mEntry.get(position).getLikeCount() - 1);
             //unselects the dislike button (need tag for this?)
 
          }
          setLike.child("Like").child(path).setValue(false);
-         currentUser.getDislikedPhotos().add(path);
+         mCurrentUser.getDislikedPhotos().put(path, true);
 
          counterDislike.addListenerForSingleValueEvent(incrementCounter);
-         mEntry.get(position).setDislikeCount(mEntry.get(position).getDislikeCount() + 1);
       }
       else if (!isDisliked)
       {
          setLike.child("Like").child(path).removeValue();
-         currentUser.getDislikedPhotos().remove(path);
+         mCurrentUser.getDislikedPhotos().remove(path);
          counterDislike.addListenerForSingleValueEvent(decrementCounter);
-         mEntry.get(position).setDislikeCount(mEntry.get(position).getDislikeCount() - 1);
       }
 
    }
@@ -210,7 +197,7 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
       mCurrentUser = currentUser;
       mStorage = FirebaseStorage.getInstance();
 
-      if (currentUser != null)
+      if (mCurrentUser != null)
       {
          DatabaseReference getNick = mDataBase.getInstance().getReference("users")
                .child(mCurrentUser.getId()).child("nickname");
@@ -254,7 +241,7 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
    public EntryViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
    {
       return new EntryViewHolder(LayoutInflater.from(parent.getContext()).inflate(viewType,
-            parent, false), mCurrentUser, commentClickListener, likeClickListener,
+            parent, false), commentClickListener, likeClickListener,
             dislikeClickListener);
    }
 
@@ -262,7 +249,7 @@ public class MyAdapter extends RecyclerView.Adapter<EntryViewHolder>
    public void onBindViewHolder(EntryViewHolder holder, int position)
    {
       Entry entry = mEntry.get(position);
-      holder.bind(entry);
+      holder.bind(entry, mCurrentUser);
    }
 
    @Override
